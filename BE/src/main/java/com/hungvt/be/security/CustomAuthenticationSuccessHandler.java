@@ -73,8 +73,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		    response.setCharacterEncoding("UTF-8");
 	        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write(json);
-			return;
-//	        response.sendRedirect("http://localhost:5173/oauth2/callback?token=11111");
+			response.sendRedirect("http://localhost:5173/oauth2/callback?accessToken=" + accessToken);
 		} catch (JsonProcessingException e) {
 			log.error("Không thể chuyển đổi object sang chuỗi: {}", e.getMessage());
 		} catch (IOException e) {

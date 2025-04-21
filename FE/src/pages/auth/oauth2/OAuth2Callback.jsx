@@ -1,24 +1,21 @@
-// import React, { useEffect } from 'react'
-// import { useNavigate, useSearchParams } from 'react-router-dom';
-// import { LOCAL_STORAGE_ACCESS_TOKEN, LOCAL_STORAGE_USERNAME } from '../../../constants/BaseApi';
-// import { parseJwt } from '../../../utils/Helper';
+import React, { useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { LOCAL_STORAGE_ACCESS_TOKEN } from '../../../constants/BaseApi';
 
-// const OAuth2Callback = () => {
+const OAuth2Callback = () => {
     
-//     const [searchParams] = useSearchParams();
-//     const token = searchParams.get("token");
-//     const username = parseJwt(token);
-//     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get("accessToken");
+    const navigate = useNavigate();
   
-//     useEffect(() => {
-//       if (username) {
-//         localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN, token);
-//         localStorage.setItem(LOCAL_STORAGE_USERNAME, username);
-//         navigate("/dashboard");
-//       }
-//     }, [token, navigate]);
+    useEffect(() => {
+      if (token) {
+        localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN, token);
+        navigate("/dashboard");
+      }
+    }, [token, navigate]);
   
-//     return <p>Đang xử lý đăng nhập...</p>;
-// }
+    return <p>Đang xử lý đăng nhập...</p>;
+}
 
-// export default OAuth2Callback
+export default OAuth2Callback

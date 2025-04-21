@@ -1,30 +1,46 @@
-import React, { useEffect } from 'react';
-import './LoginComponent.css'; // import CSS riêng
-import { LOCAL_STORAGE_ACCESS_TOKEN, LOCAL_STORAGE_USERNAME } from '../../../constants/BaseApi';
+import React, { useEffect } from 'react'
+import { LOCAL_STORAGE_ACCESS_TOKEN } from '../../../constants/BaseApi';
 
 const LoginComponent = () => {
+
   useEffect(() => {
     localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
-    localStorage.removeItem(LOCAL_STORAGE_USERNAME);
   }, []);
 
   const handleLogin = () => {
     window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
+  const buttonStyle = {
+    display: "flex",
+    alignItems: "center", // Căn giữa theo chiều dọc
+    justifyContent: "center", // Căn giữa theo chiều ngang
+    gap: "10px", // Tạo khoảng cách giữa ảnh và chữ
+    padding: "10px 20px",
+    border: "none",
+    borderRadius: "5px",
+    backgroundColor: "#ffffff",
+    cursor: "pointer",
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)"
+  };
+  
+  const imgStyle = {
+    width: "20px", // Điều chỉnh kích thước ảnh
+    height: "20px"
+  };
+
   return (
-    <div className="login-container">
-      <h2 className="login-title">Đăng nhập</h2>
-      <button onClick={handleLogin} className="google-login-button">
+    <div>
+      <h2>Đăng nhập</h2>
+      <button onClick={handleLogin} style={buttonStyle}>
         <img 
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png" 
           alt="Google Logo"
-          className="google-logo"
+          style={imgStyle}
         />
-        Đăng nhập với Google
-      </button>
+        Login with Google</button>
     </div>
   );
-};
+}
 
-export default LoginComponent;
+export default LoginComponent
