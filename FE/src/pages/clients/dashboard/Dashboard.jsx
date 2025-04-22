@@ -1,14 +1,16 @@
-import React from 'react'
-import HeaderClient from '../common/HeaderClient'
+import React from 'react';
+import HeaderClient from '../common/header/HeaderClient';
+import SocialMediaPost from '../common/post/SocialMediaPost';
+import CreateSocialMediaPost from '../common/post/CreateSocialMediaPost';
 
 const Dashboard = () => {
   return (
     <>
-      <HeaderClient/>
-        <h2>Bảng điều khiển</h2>
-        <p>Chào mừng bạn đã đăng nhập!</p>
+      <HeaderClient />
+      <CreateSocialMediaPost />
+      <SocialMediaPost />
     </>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
