@@ -11,9 +11,9 @@ import { ExceptionComponent } from '../pages/exceptions'
 const AppRoutes = () => {
   return (
     <BrowserRouter>
-        <Routes>
-        <Route path="/" element={<Home />} />
+      <Routes>
         <Route path="/login" element={<LoginComponent />} />
+        {/* <Route path="/login" element={<LoginComponent />} /> */}
         <Route path="/oauth2/callback" element={<OAuth2Callback />} />
         <Route path="/dashboard" element={<PrivateRoute role='USER'><Dashboard /></PrivateRoute>} />
 
