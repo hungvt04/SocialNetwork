@@ -1,16 +1,15 @@
-package com.hungvt.be.listener;
+package com.hungvt.be.infrastructure.listener;
+
+import com.hungvt.be.entity.base.PrimaryEntity;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 import java.util.Date;
 import java.util.UUID;
 
-import com.hungvt.be.entity.base.PrimaryEntity;
-
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-
 public class PrimaryEntityListener {
 
-	@PrePersist
+    @PrePersist
     public void onCreate(PrimaryEntity entity) {
         entity.setId(this.generateId());
         entity.setCreatedAt(this.getCurrentTime());
@@ -30,5 +29,5 @@ public class PrimaryEntityListener {
     public Long getCurrentTime() {
         return new Date().getTime();
     }
-    
+
 }

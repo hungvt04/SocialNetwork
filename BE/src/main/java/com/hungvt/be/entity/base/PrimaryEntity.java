@@ -1,7 +1,6 @@
 package com.hungvt.be.entity.base;
 
-import com.hungvt.be.listener.PrimaryEntityListener;
-
+import com.hungvt.be.infrastructure.listener.PrimaryEntityListener;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
@@ -18,13 +17,13 @@ import lombok.Setter;
 @EntityListeners(PrimaryEntityListener.class)
 public class PrimaryEntity {
 
-	@Id
-	private String id;
-	
-	private Long createdAt;
-	
-	private Long updatedAt;
-	
-	private Boolean isDeleted;
-	
+    @Id
+    private String id;
+
+    private Long createdAt;
+
+    private Long updatedAt;
+
+    private Boolean isDeleted;
+
 }

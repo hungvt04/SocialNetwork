@@ -1,10 +1,10 @@
 package com.hungvt.be.entity;
 
 import com.hungvt.be.entity.base.PrimaryEntity;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,16 +13,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "token")
-public class Token extends PrimaryEntity {
+@Table(name = "image")
+public class Image extends PrimaryEntity {
 
-    @Column(columnDefinition = "TEXT")
-    private String accessToken;
-
-    @Column(columnDefinition = "TEXT")
-    private String refreshToken;
-
-    private Long expired;
+    private String url;
 
 }

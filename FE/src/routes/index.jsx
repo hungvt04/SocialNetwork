@@ -11,10 +11,10 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LoginComponent />} />
+        <Route path="/login" element={<LoginComponent />} />
         <Route path="/oauth2/callback" element={<OAuth2Callback />} />
         <Route
-          path="/dashboard"
+          path="/"
           element={
             <PrivateRoute role="USER">
               <Dashboard />

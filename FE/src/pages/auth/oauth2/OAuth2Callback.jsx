@@ -10,11 +10,13 @@ const OAuth2Callback = () => {
   useEffect(() => {
     if (token) {
       localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN, token);
-      navigate('/dashboard');
+      setTimeout(() => {
+        navigate('/');
+      }, 1000)
     }
   }, [token, navigate]);
 
-  return <p>Đang xử lý đăng nhập...</p>;
+  return <p style={{textAlign: 'center', margin: '0 auto'}}>Đang xử lý đăng nhập...</p>;
 };
 
 export default OAuth2Callback;

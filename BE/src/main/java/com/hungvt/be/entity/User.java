@@ -1,10 +1,7 @@
 package com.hungvt.be.entity;
 
-import java.util.List;
-
-import com.hungvt.be.constant.Role;
 import com.hungvt.be.entity.base.PrimaryEntity;
-
+import com.hungvt.be.infrastructure.constant.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -12,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,16 +21,20 @@ import lombok.Setter;
 @Table(name = "user")
 public class User extends PrimaryEntity {
 
-	private String username;
-	
-	private String email;
-	
-	private String fullname;
-	
-	private String password;
-	
-	private String avatar;
-	
-	private List<Role> roles;
-	
+    private String username;
+
+    private String email;
+
+    private String phoneNumber;
+
+    private String fullName;
+
+    private String gender;
+
+    private String password;
+
+    private String avatar;
+
+    private List<Role> roles;
+
 }
