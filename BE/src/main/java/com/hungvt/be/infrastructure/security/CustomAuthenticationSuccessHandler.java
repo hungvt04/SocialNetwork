@@ -55,6 +55,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         customerUserDetails.setEmail(user.getEmail());
         customerUserDetails.setUsername(user.getUsername());
         customerUserDetails.setRoles(List.of(user.getRoles().toString()));
+        customerUserDetails.setFullname(user.getFullName());
 
         String accessToken = jwtUtils.generateAccessToken(customerUserDetails, true);
         String refreshToken = jwtUtils.generateAccessToken(customerUserDetails, true);

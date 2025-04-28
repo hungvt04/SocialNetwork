@@ -2,6 +2,7 @@ package com.hungvt.be.infrastructure.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hungvt.be.infrastructure.common.model.response.ResponseError;
 import com.hungvt.be.infrastructure.constant.MappingUrl;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,12 @@ public class AuthExceptionResponse {
         int code = 401;
         String moreInformation = MappingUrl.URL_EXCEPTION + code;
 
-        ErrorResponse errorResponse = new ErrorResponse(message, message, null, code, moreInformation);
+        ResponseError responseError = new ResponseError(message, message, null, code, moreInformation);
 
         ObjectMapper objectMapper = new ObjectMapper();
         String json = null;
         try {
-            json = objectMapper.writeValueAsString(errorResponse);
+            json = objectMapper.writeValueAsString(responseError);
             response.setContentType("application/json; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -44,12 +45,12 @@ public class AuthExceptionResponse {
         int code = 403;
         String moreInformation = MappingUrl.URL_EXCEPTION + code;
 
-        ErrorResponse errorResponse = new ErrorResponse(message, message, null, code, moreInformation);
+        ResponseError responseError = new ResponseError(message, message, null, code, moreInformation);
 
         ObjectMapper objectMapper = new ObjectMapper();
         String json = null;
         try {
-            json = objectMapper.writeValueAsString(errorResponse);
+            json = objectMapper.writeValueAsString(responseError);
             response.setContentType("application/json; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);

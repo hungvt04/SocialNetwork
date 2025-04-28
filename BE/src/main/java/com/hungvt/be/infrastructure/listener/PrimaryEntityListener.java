@@ -11,7 +11,9 @@ public class PrimaryEntityListener {
 
     @PrePersist
     public void onCreate(PrimaryEntity entity) {
-        entity.setId(this.generateId());
+        if (entity.getId() == null) {
+            entity.setId(this.generateId());
+        }
         entity.setCreatedAt(this.getCurrentTime());
         entity.setUpdatedAt(this.getCurrentTime());
         entity.setIsDeleted(false);

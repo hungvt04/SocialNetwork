@@ -33,18 +33,6 @@ public class Comment extends PrimaryEntity {
     @JoinColumn(name = "article_id")
     private Article article;
 
-    @ManyToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
-
-    @ManyToOne
-    @JoinColumn(name = "hashtag_id")
-    private Hashtag hashtag;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private User member;
-
     @OneToOne
     @JoinColumn(name = "rely_comment_id")
     private Comment relyComment;

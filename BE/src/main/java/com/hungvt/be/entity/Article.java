@@ -5,8 +5,6 @@ import com.hungvt.be.infrastructure.constant.ArticleStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,17 +27,5 @@ public class Article extends PrimaryEntity {
 
     @Enumerated(EnumType.STRING)
     private ArticleStatus status;
-
-    @ManyToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
-
-    @ManyToOne
-    @JoinColumn(name = "hashtag_id")
-    private Hashtag hashtag;
-
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private User member;
 
 }

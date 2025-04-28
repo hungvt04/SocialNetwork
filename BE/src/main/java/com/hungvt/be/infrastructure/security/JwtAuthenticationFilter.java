@@ -1,8 +1,9 @@
 package com.hungvt.be.infrastructure.security;
 
+import com.hungvt.be.infrastructure.constant.MappingUrl;
 import com.hungvt.be.infrastructure.exception.AuthExceptionResponse;
 import com.hungvt.be.infrastructure.utils.JwtUtils;
-import com.hungvt.be.repository.ITokenRepository;
+import com.hungvt.be.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,17 +27,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
 
-    private final ITokenRepository tokenRepository;
+    private final TokenRepository tokenRepository;
 
     private final AuthExceptionResponse authExceptionResponse;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
+        String path = request.getRequestURI();
+
+        // Bỏ qua JWT filter cho các path public
+        if (path.startsWith(MappingUrl.API_COMMON)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String token = jwtUtils.getTokenFromRequest(request);
         log.info("Token from header: {}", token);
-        if (token != null && token.trim().length() > 0 && !token.equalsIgnoreCase("{{bearerToken}}")) {
+        if (token != null && !token.trim().isEmpty() && !token.equalsIgnoreCase("{{bearerToken}}")) {
 
             log.info("Handle valid token and exist in the database.");
             boolean isValidToken = jwtUtils.isValidToken(token);
@@ -48,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             boolean isExists = tokenRepository.existsByAccessToken(token);
 
-            if (isValidToken && isExists) {
+            if (isExists) {
                 Claims claims = jwtUtils.getClaims(token);
                 String username = claims.get("username", String.class);
                 CustomerUserDetails userDetails = userDetailsService.loadUserByUsername(username);

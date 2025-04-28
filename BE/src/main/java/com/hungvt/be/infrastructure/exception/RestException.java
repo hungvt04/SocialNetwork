@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RestException extends RuntimeException {
 
-    private String errors;
+    private String error;
 
 }

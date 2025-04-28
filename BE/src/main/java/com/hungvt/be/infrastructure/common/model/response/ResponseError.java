@@ -1,4 +1,4 @@
-package com.hungvt.be.infrastructure.exception;
+package com.hungvt.be.infrastructure.common.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorResponse {
+public class ResponseError {
 
     private String message;
 

@@ -1,7 +1,9 @@
 package com.hungvt.be.entity;
 
 import com.hungvt.be.entity.base.PrimaryEntity;
+import com.hungvt.be.infrastructure.listener.PrimaryEntityListener;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -17,15 +19,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "friends")
-public class Friends extends PrimaryEntity {
+@EntityListeners(PrimaryEntityListener.class)
+@Table(name = "image_temp")
+public class HashtagTemp extends PrimaryEntity {
 
     @ManyToOne
-    @JoinColumn(name = "user1_id")
-    private User user1;
+    @JoinColumn(name = "hashtag_id")
+    private Hashtag hashtag;
 
     @ManyToOne
-    @JoinColumn(name = "user2_id")
-    private User user2;
+    @JoinColumn(name = "article_id")
+    private Article article;
+
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
 }
