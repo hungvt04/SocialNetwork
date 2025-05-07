@@ -22,13 +22,8 @@ public class CloudinaryConfig {
 
     @Bean
     public Cloudinary getCloudinary() {
-        log.info("Cloudinary configuration initialized");
-        log.info("cloudName: {}", this.cloudName);
-        log.info("apiKey: {}", this.apiKey);
-        log.info("apiSecret: {}", this.apiSecret);
-
         if (this.apiKey == null || this.apiKey.isBlank()) {
-            throw new IllegalStateException("API Key is missing!!! Check application.yml and @Value syntax!");
+        	log.error("API Key is missing!!! Check application.yml and @Value syntax!");
         }
         return new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", this.cloudName,

@@ -2,9 +2,11 @@ package com.hungvt.be.infrastructure.security;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hungvt.be.entity.Token;
 import com.hungvt.be.entity.User;
 import com.hungvt.be.infrastructure.constant.Role;
 import com.hungvt.be.infrastructure.utils.JwtUtils;
+import com.hungvt.be.repository.TokenRepository;
 import com.hungvt.be.repository.UserRepository;
 import com.hungvt.be.response.TokenResponse;
 import jakarta.servlet.ServletException;
@@ -27,6 +29,8 @@ import java.util.Optional;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
+    
+    private final TokenRepository tokenRepository;
 
     private final JwtUtils jwtUtils;
 
@@ -62,6 +66,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         System.out.println("accessToken: " + accessToken);
         System.out.println("refreshToken: " + refreshToken);
+        
+        Token token = new Token();
+        token.setAccessToken(accessToken);
+        token.setRefreshToken(refreshToken);
+        token.setExpired(jwtUtils.getExpiredRefreshToken(refreshToken));
+        tokenRepository.save(token);
 
         TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken);
         ObjectMapper objectMapper = new ObjectMapper();

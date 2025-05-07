@@ -55,10 +55,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authExceptionResponse.unauthorized();
                 return;
             }
+            log.info("Token is valid!!!");
 
             boolean isExists = tokenRepository.existsByAccessToken(token);
 
             if (isExists) {
+            	log.info("Token is found!!!");
                 Claims claims = jwtUtils.getClaims(token);
                 String username = claims.get("username", String.class);
                 CustomerUserDetails userDetails = userDetailsService.loadUserByUsername(username);

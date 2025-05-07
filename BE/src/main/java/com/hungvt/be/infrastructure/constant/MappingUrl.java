@@ -12,7 +12,7 @@ public class MappingUrl {
 
     public static final String API_AUTH = API_VERSION + "/auths";
 
-    public static final String API_PERMISTION = API_VERSION + "/permissions";
+    public static final String API_ARTICLE = API_VERSION + "/articles";
 
     public static final String API_ROLE = API_VERSION + "/roles";
 

@@ -13,7 +13,7 @@ export const ROUTE_EXCEPTION = [
       title: '401',
       subTitle: 'Bạn cần đăng nhập để truy cập',
       titleButton: 'ĐĂNG NHẬP LẠI',
-      route: '/',
+      route: '/login',
     },
   },
   {
@@ -23,7 +23,7 @@ export const ROUTE_EXCEPTION = [
       title: '403',
       subTitle: 'Bạn không có quyền truy cập',
       titleButton: 'ĐĂNG NHẬP LẠI',
-      route: '/',
+      route: '/login',
     },
   },
   {

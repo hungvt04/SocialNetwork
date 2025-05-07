@@ -10,109 +10,123 @@ import {
   Select,
   Space,
   Typography,
-  Image,
 } from 'antd';
 import React, { useState } from 'react';
 import {
-  EllipsisOutlined,
   GlobalOutlined,
   LockOutlined,
-  UserDeleteOutlined,
   UserOutlined,
   DeleteOutlined,
+  UserAddOutlined,
 } from '@ant-design/icons';
 import { InboxOutlined } from '@ant-design/icons';
-import { message, Upload } from 'antd';
+import { Upload } from 'antd';
+import { API_COMMON_IMAGE, API_MANAGEMENT_ARTICLE } from '../../../../constants/BaseApi';
+import axiosInstance from '../../../../api/axiosInstance';
+import ModalTagUser from './ModalTagUser';
+import Loading from '../loading/Loading';
 
 const { Dragger } = Upload;
 const { TextArea } = Input;
-const { Text, Paragraph } = Typography;
+const { Text } = Typography;
 
 const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => {
   const [fileList, setFileList] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
-  const [showUploader, setShowUploader] = useState(true);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpenModalTagUser, setIsOpenModalTagUser] = useState(false);
+  const [tagUsers, setTagUsers] = useState([]);
+  const [article, setArticle] = useState({
+    status: 'onlyMe',
+    content: '',
+    images: [],
+    members: [],
+  });
 
   const props = {
-    name: 'file',
     multiple: true,
-    fileList: fileList,
+    showUploadList: false,
     beforeUpload: (file) => {
-      // Kiểm tra định dạng file
-      const isImage = file.type.startsWith('image/');
-      if (!isImage) {
-        message.error('Chỉ chấp nhận định dạng ảnh!');
-        return Upload.LIST_IGNORE;
-      }
-
-      // Đọc file để hiển thị preview
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        setPreviewImages(prev => [...prev, {
-          uid: file.uid,
-          url: reader.result,
-          name: file.name
-        }]);
+      const preview = {
+        uid: file.uid,
+        name: file.name,
+        url: URL.createObjectURL(file),
       };
-      
-      return false; // Ngăn chặn upload tự động
-    },
-    onChange(info) {
-      // Cập nhật danh sách file
-      setFileList(info.fileList);
-      
-      // Ẩn uploader nếu có ảnh
-      if (info.fileList.length > 0) {
-        setShowUploader(false);
-      } else {
-        setShowUploader(true);
-        setPreviewImages([]);
-      }
-    },
-    onDrop(e) {
-      console.log('Dropped files', e.dataTransfer.files);
-    },
-    customRequest: ({ file, onSuccess }) => {
-      // Xử lý upload (giả lập thành công sau 1 giây)
-      setTimeout(() => {
-        onSuccess('ok');
-      }, 1000);
+
+      setPreviewImages((prev) => [...prev, preview]);
+      setFileList((prev) => [...prev, file]);
+
+      return false;
     },
     onRemove: (file) => {
-      // Xóa ảnh khỏi preview khi xóa file
-      setPreviewImages(prev => prev.filter(item => item.uid !== file.uid));
-      
-      // Hiện lại uploader nếu không còn ảnh nào
-      if (fileList.length <= 1) {
-        setShowUploader(true);
-      }
+      handleRemoveImage(file.uid);
+    },
+    fileList: fileList,
+  };
+
+  const handleRemoveImage = (uid) => {
+    setFileList((prev) => prev.filter((file) => file.uid !== uid));
+    setPreviewImages((prev) => prev.filter((image) => image.uid !== uid));
+  };
+
+  const handlePostArticle = async () => {
+    setIsLoading(true);
+    const formData = new FormData();
+
+    if (fileList && fileList.length > 0) {
+      fileList.forEach((file) => {
+        formData.append('files', file);
+      });
+    }
+
+    try {
+      // Upload ảnh
+      const uploadRes = await axiosInstance.post(API_COMMON_IMAGE + '/uploads', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+
+      const uploadedUrls = uploadRes?.data?.data?.urls || [];
+
+      // Tạo article hoàn chỉnh
+      const newArticle = {
+        ...article,
+        images: [...article.images, ...uploadedUrls],
+      };
+
+      // Gửi article hoàn chỉnh
+      const postRes = await axiosInstance.post(API_MANAGEMENT_ARTICLE, {
+        request: newArticle,
+      });
+
+      console.log('Post article success:', postRes.data);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Xử lý xóa một ảnh cụ thể
-  const handleRemoveImage = (uid) => {
-    setFileList(prev => prev.filter(file => file.uid !== uid));
-    setPreviewImages(prev => prev.filter(image => image.uid !== uid));
-    
-    // Hiện lại uploader nếu không còn ảnh nào
-    if (fileList.length <= 1) {
-      setShowUploader(true);
-    }
+  const handleCloseModalTagUser = () => {
+    setTagUsers([]);
+    setIsOpenModalTagUser(false);
+  };
+
+  const handleAddTagUser = (user) => {
+    setTagUsers((prev) => [...prev, user]);
   };
 
   return (
     <div>
-      <Modal 
-        title="Tạo bài viết" 
-        open={isModalOpen} 
-        onOk={handleOk} 
+      {<Loading isLoading={isLoading} />}
+      <Modal
+        title="Tạo bài viết"
+        open={isModalOpen}
+        onOk={handlePostArticle}
         onCancel={handleCancel}
         footer={[
-          <Button key="back" onClick={handleCancel}>
-            Hủy
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
+          <Button key="submit" type="primary" onClick={handlePostArticle} style={{ width: '100%' }}>
             Đăng bài
           </Button>,
         ]}
@@ -136,6 +150,12 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
                   defaultValue="onlyMe"
                   style={{ width: 'fit-content', minWidth: 120 }}
                   size="small"
+                  onChange={(value) => {
+                    setArticle((prev) => ({
+                      ...prev,
+                      status: value,
+                    }));
+                  }}
                   options={[
                     {
                       value: 'public',
@@ -156,6 +176,14 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
                   ]}
                 />
               </Space>
+              <Space style={{ textAlign: 'right', marginLeft: 'auto' }}>
+                <UserAddOutlined
+                  style={{ fontSize: '25px', cursor: 'pointer' }}
+                  onClick={() => {
+                    setIsOpenModalTagUser(true);
+                  }}
+                />
+              </Space>
             </Flex>
           </Col>
         </Row>
@@ -169,15 +197,36 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
             outline: 'none',
             resize: 'none',
           }}
+          onChange={(e) => {
+            setArticle((prev) => ({
+              ...prev,
+              content: e.target.value,
+              hashtag: e.target.value.match(/#[\w\d_]+/g),
+            }));
+          }}
         />
 
-        {/* Hiển thị ảnh đã tải lên */}
-        {previewImages.length > 0 && (
-          <div style={{ marginBottom: '16px' }}>
+        <Dragger {...props} style={{ padding: '0px', borderRadius: 10 }}>
+          {previewImages.length === 0 ? (
+            <>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">Kéo thả ảnh vào đây hoặc bấm để chọn</p>
+              <p className="ant-upload-hint">Chỉ chấp nhận định dạng ảnh.</p>
+            </>
+          ) : (
             <Row gutter={[8, 8]}>
               {previewImages.map((image) => (
-                <Col key={image.uid} xs={24} sm={12} style={{ position: 'relative' }}>
-                  <div style={{ position: 'relative', height: '200px', overflow: 'hidden', borderRadius: '8px' }}>
+                <Col key={image.uid} xs={12} sm={12} style={{ position: 'relative' }}>
+                  <div
+                    style={{
+                      position: 'relative',
+                      height: '150px',
+                      overflow: 'hidden',
+                      borderRadius: '8px',
+                    }}
+                  >
                     <img
                       src={image.url}
                       alt={image.name}
@@ -193,7 +242,10 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
                       icon={<DeleteOutlined />}
                       size="small"
                       danger
-                      onClick={() => handleRemoveImage(image.uid)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveImage(image.uid);
+                      }}
                       style={{
                         position: 'absolute',
                         top: '8px',
@@ -204,46 +256,14 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
                 </Col>
               ))}
             </Row>
-          </div>
-        )}
-
-        {/* Hiển thị uploader khi không có ảnh hoặc khi muốn thêm ảnh */}
-        {showUploader && (
-          <Dragger {...props} style={{ padding: 20, borderRadius: 10 }}>
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">Kéo thả ảnh vào đây hoặc bấm để chọn</p>
-            <p className="ant-upload-hint">Chỉ chấp nhận định dạng ảnh.</p>
-          </Dragger>
-        )}
-
-        {/* Nút thêm ảnh khi đã có ảnh và uploader đã ẩn */}
-        {!showUploader && (
-          <Button 
-            onClick={() => setShowUploader(true)}
-            style={{ marginTop: '10px', marginBottom: '10px' }}
-          >
-            Thêm ảnh
-          </Button>
-        )}
-
-        <Row>
-          <Col span={24}>
-            <Flex align="center" style={{ padding: '8px 10px' }}>
-              <Text strong style={{ fontSize: '16px' }}>
-                Thêm vào bài viết của bạn
-              </Text>
-              <Button type="text" icon={<GlobalOutlined style={{ fontSize: '22px' }} />}></Button>
-              <Button
-                type="text"
-                icon={<UserDeleteOutlined style={{ fontSize: '22px' }} />}
-              ></Button>
-              <Button type="text" icon={<LockOutlined style={{ fontSize: '22px' }} />}></Button>
-            </Flex>
-          </Col>
-        </Row>
+          )}
+        </Dragger>
       </Modal>
+      <ModalTagUser
+        isOpenModalTagUser={isOpenModalTagUser}
+        handleCloseModalTagUser={handleCloseModalTagUser}
+        handleAddTagUser={handleAddTagUser}
+      />
     </div>
   );
 };

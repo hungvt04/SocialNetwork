@@ -22,13 +22,12 @@ const SocialMediaPost = () => {
           border: '1px solid rgba(56, 56, 56, 0.23)',
         }}
       >
-        <img
-          style={{ cover: 'cover', width: '100%', height: '100%' }}
-          alt="post"
-          src="https://scontent.fhan14-4.fna.fbcdn.net/v/t39.30808-6/492348579_653854957618900_7311016210018614643_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeElHqXJswtS1Urw09Alpk-nHtzqzRt_vrAe3OrNG3--sEqUpDvMemz-LCzaynp18aUCKq6m9oxPUSZW9md5ix7i&_nc_ohc=epMBo1sKfWcQ7kNvwH8ptmU&_nc_oc=Adn8Fa5P9oiFa5QXYixYIsmlykFSYlYi_yEnMaGT7DPOYdfJM4gssIkVslP5o3xwI6I&_nc_zt=23&_nc_ht=scontent.fhan14-4.fna&_nc_gid=ay-AgqwsHX4b4VFZD9iiow&oh=00_AfEZlJ6F1OuN65f6y2ISL0kwc9sJ1BtvzjUUOxuLYMl-AQ&oe=680D223E" // Thay bằng đường dẫn ảnh thật hoặc import
-        />
-
-        <Row style={{}}>
+        <Row
+          style={{
+            borderRadius: '10px 10px 0px 0px ',
+            marginTop: '0px',
+          }}
+        >
           <Col span={24}>
             <Flex justify="space-between" align="center" style={{ padding: '8px 15px' }}>
               <Flex>
@@ -60,6 +59,18 @@ const SocialMediaPost = () => {
             #dangthuhaf #dangthuha #schannel
           </Col>
           <Divider style={{ padding: '0px', margin: '0px' }} />
+        </Row>
+
+        <img
+          style={{
+            cover: 'cover',
+            width: '100%',
+            height: '100%',
+          }}
+          alt="post"
+          src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/495104089_664252183245844_3878587684754354222_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=71_6qyjuxKEQ7kNvwFN2e_V&_nc_oc=Adm_irHOb8e6LkDbfFWbVjXxMNP30tAGxQG34SKg1cu6MBr_OAtET3rDgACh4ONTaU4&_nc_zt=23&_nc_ht=scontent.fhan14-2.fna&_nc_gid=rci0w0Kd6Qn_7IQz7lhN-A&oh=00_AfI837ALiAKKMTn-ervwch11hDh7MK4C0gvOS5H2EHldLg&oe=6820B646"
+        />
+        <Row>
           <Col span={24}>
             <Flex justify="space-around" align="center" style={{ padding: '8px 10px' }}>
               <Button type="text" icon={<LikeOutlined />}>
