@@ -101,10 +101,11 @@ public class CArticleServiceImpl implements CArticleService {
     @Transactional
     public ResponseObject postArticle(CPostArticleRequest request) {
 
+    	System.out.println("REQUEST: " + request);
         Article article = new Article();
         article.setContent(request.getContent());
         System.out.println("request.getStatus() = " + request.getStatus());
-//        article.setStatus(ArticleStatus.PRIVATE);
+        article.setStatus(ArticleStatus.PRIVATE);
         article.setStatus(ArticleStatus.valueOf(request.getStatus()));
         Article savedArticle = articleRepository.save(article);
 

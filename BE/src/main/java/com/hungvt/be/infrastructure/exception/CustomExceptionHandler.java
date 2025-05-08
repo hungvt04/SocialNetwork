@@ -12,21 +12,22 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@ControllerAdvice
+@RestControllerAdvice
 @Log4j2
 @RequiredArgsConstructor
 public class CustomExceptionHandler {
@@ -44,7 +45,7 @@ public class CustomExceptionHandler {
 
     // Xử lý lỗi không tìm thấy url,...
     @ExceptionHandler({NoHandlerFoundException.class})
-    public ResponseObject handleNoHandlerFoundException(NoHandlerFoundException ex) {
+    public ResponseEntity<?> handleNoHandlerFoundException(NoHandlerFoundException ex) {
 
         String message = getMessage("NoHandleFoundException.message") + ex.getHttpMethod() + " " + ex.getRequestURL();
         String detailMessage = ex.getLocalizedMessage();
@@ -53,7 +54,9 @@ public class CustomExceptionHandler {
 
         logger.error("❌ NoHandlerFoundException: {}", detailMessage);
         ResponseError response = new ResponseError(message, detailMessage, null, code, moreInformation);
-        return ResponseObject.ofException(response, HttpStatus.NOT_FOUND);
+        ResponseObject responseObject = ResponseObject.ofException(response, HttpStatus.NOT_FOUND);
+//        return ResponseObject.response(responseObject);
+        return new ResponseEntity<T>()
     }
 
     private String getMessageFromHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {

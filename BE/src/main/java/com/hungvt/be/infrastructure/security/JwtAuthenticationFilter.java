@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (isExists) {
             	log.info("Token is found!!!");
                 Claims claims = jwtUtils.getClaims(token);
-                String username = claims.get("username", String.class);
+                String username = claims.get("email", String.class);
                 CustomerUserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 UsernamePasswordAuthenticationToken authToken =

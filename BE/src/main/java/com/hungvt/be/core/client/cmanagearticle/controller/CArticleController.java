@@ -1,5 +1,6 @@
 package com.hungvt.be.core.client.cmanagearticle.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import com.hungvt.be.core.client.cmanagearticle.service.CArticleService;
 import com.hungvt.be.infrastructure.common.model.response.ResponseObject;
 import com.hungvt.be.infrastructure.constant.MappingUrl;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,8 +24,8 @@ public class CArticleController {
 	private final CArticleService articleService;
 	
 	@PostMapping
-    public ResponseObject postArticle(@RequestBody CPostArticleRequest request) {
-        return articleService.postArticle(request);
+    public ResponseEntity<?> postArticle(@Valid @RequestBody CPostArticleRequest request) {
+        return ResponseObject.response(articleService.postArticle(request));
     }
 	
 }

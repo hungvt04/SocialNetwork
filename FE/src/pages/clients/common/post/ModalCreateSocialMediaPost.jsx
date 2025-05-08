@@ -42,7 +42,7 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
     content: '',
     images: [],
     members: [],
-    hashtags: []
+    hashtags: [],
   });
 
   const props = {
@@ -97,12 +97,9 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
       // };
 
       // Gửi article hoàn chỉnh
-      console.log({article});
-      
-      const postRes = await axiosInstance.post(API_MANAGEMENT_ARTICLE, {
-        // request: newArticle,
-        request: article,
-      });
+      console.log({ article });
+
+      const postRes = await axiosInstance.post(API_MANAGEMENT_ARTICLE, article);
 
       console.log('Post article success:', postRes.data);
     } catch (error) {

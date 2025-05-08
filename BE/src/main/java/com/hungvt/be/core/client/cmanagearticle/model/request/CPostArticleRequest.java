@@ -8,6 +8,8 @@ import lombok.ToString;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,8 +17,10 @@ import java.util.List;
 @ToString
 public class CPostArticleRequest {
 
+	@NotBlank(message = "Nội dung không được để trống!!!")
     private String content;
 
+    
     private String status;
 
     private List<String> hashtags;
