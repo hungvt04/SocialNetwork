@@ -29,7 +29,7 @@ import java.util.Optional;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
-    
+
     private final TokenRepository tokenRepository;
 
     private final JwtUtils jwtUtils;
@@ -38,8 +38,15 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+
+        System.out.println("===> OAuth2User attributes:");
+        oAuth2User.getAttributes().forEach((key, value) -> {
+            System.out.println(key + " : " + value);
+        });
+
         String email = oAuth2User.getAttribute("email");
-        String fullname = oAuth2User.getAttribute("name");
+        String fullName = oAuth2User.getAttribute("name");
+        String picture = oAuth2User.getAttribute("picture");
 
         User user = null;
         Optional<User> userOptional = userRepository.findByEmail(email);
@@ -51,7 +58,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         }
 
         user.setEmail(email);
-        user.setFullName(fullname);
+        user.setFullName(fullName);
+        user.setAvatar(picture);
         user = userRepository.save(user);
 
         CustomerUserDetails customerUserDetails = new CustomerUserDetails();
@@ -62,11 +70,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         customerUserDetails.setFullname(user.getFullName());
 
         String accessToken = jwtUtils.generateAccessToken(customerUserDetails, true);
-        String refreshToken = jwtUtils.generateAccessToken(customerUserDetails, true);
+        String refreshToken = jwtUtils.generateAccessToken(customerUserDetails, false);
 
         System.out.println("accessToken: " + accessToken);
         System.out.println("refreshToken: " + refreshToken);
-        
+
         Token token = new Token();
         token.setAccessToken(accessToken);
         token.setRefreshToken(refreshToken);
@@ -80,7 +88,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             json = objectMapper.writeValueAsString(tokenResponse);
             response.setContentType("application/json; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write(json);
             response.sendRedirect("http://localhost:5173/oauth2/callback?accessToken=" + accessToken);
         } catch (JsonProcessingException e) {

@@ -146,7 +146,7 @@ public class CustomExceptionHandler {
         int code = 500;
         String moreInformation = MappingUrl.URL_EXCEPTION + code;
 
-        logger.error("❌ RuntimeException: {}", detailMessage);
+        logger.error("❌ RuntimeException: {}", exception);
         ResponseError response = new ResponseError(message, detailMessage, null, code, moreInformation);
         return ResponseObject.ofException(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

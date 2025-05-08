@@ -103,6 +103,8 @@ public class CArticleServiceImpl implements CArticleService {
 
         Article article = new Article();
         article.setContent(request.getContent());
+        System.out.println("request.getStatus() = " + request.getStatus());
+//        article.setStatus(ArticleStatus.PRIVATE);
         article.setStatus(ArticleStatus.valueOf(request.getStatus()));
         Article savedArticle = articleRepository.save(article);
 

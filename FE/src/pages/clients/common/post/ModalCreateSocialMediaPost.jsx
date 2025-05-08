@@ -38,10 +38,11 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
   const [isOpenModalTagUser, setIsOpenModalTagUser] = useState(false);
   const [tagUsers, setTagUsers] = useState([]);
   const [article, setArticle] = useState({
-    status: 'onlyMe',
+    status: 'PRIVATE',
     content: '',
     images: [],
     members: [],
+    hashtags: []
   });
 
   const props = {
@@ -82,22 +83,25 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
 
     try {
       // Upload ảnh
-      const uploadRes = await axiosInstance.post(API_COMMON_IMAGE + '/uploads', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
+      // const uploadRes = await axiosInstance.post(API_COMMON_IMAGE + '/uploads', formData, {
+      //   headers: { 'Content-Type': 'multipart/form-data' },
+      //   withCredentials: true,
+      // });
 
-      const uploadedUrls = uploadRes?.data?.data?.urls || [];
+      // const uploadedUrls = uploadRes?.data?.data?.urls || [];
 
-      // Tạo article hoàn chỉnh
-      const newArticle = {
-        ...article,
-        images: [...article.images, ...uploadedUrls],
-      };
+      // // Tạo article hoàn chỉnh
+      // const newArticle = {
+      //   ...article,
+      //   images: [...article.images, ...uploadedUrls],
+      // };
 
       // Gửi article hoàn chỉnh
+      console.log({article});
+      
       const postRes = await axiosInstance.post(API_MANAGEMENT_ARTICLE, {
-        request: newArticle,
+        // request: newArticle,
+        request: article,
       });
 
       console.log('Post article success:', postRes.data);
@@ -147,7 +151,7 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
               <Space direction="vertical" size={0}>
                 <Text strong>Hùng Vũ</Text>
                 <Select
-                  defaultValue="onlyMe"
+                  defaultValue="PRIVATE"
                   style={{ width: 'fit-content', minWidth: 120 }}
                   size="small"
                   onChange={(value) => {
@@ -158,7 +162,7 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
                   }}
                   options={[
                     {
-                      value: 'public',
+                      value: 'PUBLIC',
                       label: (
                         <>
                           <GlobalOutlined /> Công khai
@@ -166,7 +170,7 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
                       ),
                     },
                     {
-                      value: 'onlyMe',
+                      value: 'PRIVATE',
                       label: (
                         <>
                           <LockOutlined /> Chỉ mình tôi
@@ -201,7 +205,7 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
             setArticle((prev) => ({
               ...prev,
               content: e.target.value,
-              hashtag: e.target.value.match(/#[\w\d_]+/g),
+              hashtags: [...prev.hashtags, e.target.value.match(/#[\w\d_]+/g)],
             }));
           }}
         />
