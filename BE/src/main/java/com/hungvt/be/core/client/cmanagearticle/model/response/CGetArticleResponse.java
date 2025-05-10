@@ -5,6 +5,19 @@ import java.util.List;
 public interface CGetArticleResponse {
 
     String getArticleId();
+    
+    String getAuthorId();
+    
+    String getAuthorName();
+    
+    Long getCreatedAt();
+
+    String getContent();
+
+    String getUrls();
+    
+    Integer getTotalReact();
+    
 
     String getUserId();
 
@@ -12,17 +25,14 @@ public interface CGetArticleResponse {
 
     String getFullName();
 
-    String getContent();
-
     List<String> getImages();
 
     List<String> getHashtags();
 
     List<String> getMembers();
 
-    String getCreatedAt();
-
     String getUpdatedAt();
 
     String getStatus();
+    
 }

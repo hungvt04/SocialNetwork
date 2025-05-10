@@ -26,13 +26,6 @@ import HeaderMessage from './message/HeaderMessage';
 import HeaderNotification from './notification/HeaderNotification';
 import HeaderAccount from './account/HeaderAccount';
 
-const styleAvatar = {
-  marginLeft: '15px',
-  flexShrink: 0,
-  alignSelf: 'center',
-  cursor: 'pointer',
-};
-
 const getItem = (key, icon, tooltip) => {
   return {
     key,
@@ -71,7 +64,7 @@ const parseItemToLabel = (item) => {
           size={40}
           icon={item.icon}
           style={{
-            marginRight: '10px',
+            // marginRight: '10px',
             flexShrink: 0,
             alignSelf: 'center',
           }}
@@ -112,9 +105,8 @@ const HeaderClient = () => {
     <div>
       <Row
         style={{
-          width: '100vw',
+          width: '100%',
           padding: '10px 20px',
-          marginRight: '20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',

@@ -17,6 +17,8 @@ import com.hungvt.be.entity.UserArticle;
 import com.hungvt.be.infrastructure.common.model.response.ResponseObject;
 import com.hungvt.be.infrastructure.constant.ArticleStatus;
 import com.hungvt.be.infrastructure.utils.GenerateUUID;
+import com.hungvt.be.infrastructure.utils.VariablesGlobal;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -94,19 +96,19 @@ public class CArticleServiceImpl implements CArticleService {
 
     @Override
     public ResponseObject getAllArticles() {
-        return null;
+        return ResponseObject.ofData(articleRepository.getAllArticle());
     }
 
     @Override
     @Transactional
     public ResponseObject postArticle(CPostArticleRequest request) {
 
-    	System.out.println("REQUEST: " + request);
         Article article = new Article();
         article.setContent(request.getContent());
         System.out.println("request.getStatus() = " + request.getStatus());
         article.setStatus(ArticleStatus.PRIVATE);
         article.setStatus(ArticleStatus.valueOf(request.getStatus()));
+        article.setAuthor(VariablesGlobal.USER);
         Article savedArticle = articleRepository.save(article);
 
         this.handleHashtags(savedArticle, request.getHashtags());

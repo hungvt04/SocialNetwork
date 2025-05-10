@@ -6,6 +6,7 @@ import com.hungvt.be.entity.Token;
 import com.hungvt.be.entity.User;
 import com.hungvt.be.infrastructure.constant.Role;
 import com.hungvt.be.infrastructure.utils.JwtUtils;
+import com.hungvt.be.infrastructure.utils.VariablesGlobal;
 import com.hungvt.be.repository.TokenRepository;
 import com.hungvt.be.repository.UserRepository;
 import com.hungvt.be.response.TokenResponse;
@@ -61,7 +62,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         user.setFullName(fullName);
         user.setAvatar(picture);
         user = userRepository.save(user);
-
+        VariablesGlobal.USER = user;
+        
         CustomerUserDetails customerUserDetails = new CustomerUserDetails();
         customerUserDetails.setId(user.getId());
         customerUserDetails.setEmail(user.getEmail());

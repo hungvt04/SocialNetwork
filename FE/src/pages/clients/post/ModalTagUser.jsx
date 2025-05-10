@@ -1,9 +1,34 @@
 import { Avatar, Button, Flex, Input, Modal, Select, Space, Typography } from 'antd';
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 
-const data = ['Vũ Trọng Hùng', 'Nguyễn Văn A', 'Nguyễn Văn B', 'Nguyễn Văn C'];
+const data = [
+  'Vũ Trọng Hùng',
+  'Nguyễn Văn A',
+  'Nguyễn Văn B',
+  'Nguyễn Văn C',
+  'Nguyễn Văn D',
+  'Nguyễn Văn E',
+  'Nguyễn Văn F',
+  'Nguyễn Văn G',
+  'Nguyễn Văn H',
+  'Nguyễn Văn I',
+  'Nguyễn Văn J',
+  'Nguyễn Văn K',
+  'Nguyễn Văn L',
+  'Nguyễn Văn M',
+  'Nguyễn Văn N',
+  'Nguyễn Văn O',
+  'Nguyễn Văn P',
+  'Nguyễn Văn Q',
+  'Nguyễn Văn R',
+  'Nguyễn Văn S',
+  'Nguyễn Văn T',
+  'Nguyễn Văn U',
+  'Nguyễn Văn V',
+  'Nguyễn Văn W',
+];
 
 const HoverableSpace = styled(Space)`
   margin-top: 3px;
@@ -20,7 +45,8 @@ const HoverableSpace = styled(Space)`
 const { Text } = Typography;
 
 const ModalTagUser = ({ isOpenModalTagUser, handleAddTagUser, handleCloseModalTagUser }) => {
-  const [selectedUsers, setSelectedUsers] = useState(['Hùng', 'Hà']);
+  const [friendList, setFriendList] = useState(data);
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -32,7 +58,18 @@ const ModalTagUser = ({ isOpenModalTagUser, handleAddTagUser, handleCloseModalTa
 
   const handleRemoveUser = (value) => {
     setSelectedUsers(selectedUsers.filter((user) => user !== value));
+    setFriendList((prev) => [...prev, value]);
+    setFriendList((prev) => [...prev].sort((a, b) => a.localeCompare(b)));
   };
+
+  const handleClickTagUser = (user) => {
+    setSelectedUsers((prev) => [...prev, user]);
+    setFriendList((prev) => prev.filter((friend) => friend !== user));
+  };
+
+  useEffect(() => {
+    setFriendList((prev) => [...prev].sort((a, b) => a.localeCompare(b)));
+  }, []);
 
   return (
     <>
@@ -41,7 +78,6 @@ const ModalTagUser = ({ isOpenModalTagUser, handleAddTagUser, handleCloseModalTa
         open={isOpenModalTagUser}
         footer={null}
         onCancel={handleCloseModalTagUser}
-        style={{ height: '500px' }}
       >
         <Flex align="center" gap={10} style={{ marginBottom: '10px' }}>
           <Input
@@ -70,23 +106,25 @@ const ModalTagUser = ({ isOpenModalTagUser, handleAddTagUser, handleCloseModalTa
           </>
         )}
         <Text style={{ fontSize: '12px', fontWeight: '500' }}>GỢI Ý</Text>
-        {data &&
-          data?.map((item, index) => (
-            <HoverableSpace key={index}>
-              <Flex justify="space-between" align="center" style={{ padding: '4px' }}>
-                <Avatar
-                  size={40}
-                  icon={<UserOutlined />}
-                  style={{
-                    marginRight: '10px',
-                    flexShrink: 0,
-                    alignSelf: 'center',
-                  }}
-                />
-                {item}
-              </Flex>
-            </HoverableSpace>
-          ))}
+        <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+          {friendList &&
+            friendList?.map((item, index) => (
+              <HoverableSpace key={index} onClick={() => handleClickTagUser(item)}>
+                <Flex justify="space-between" align="center" style={{ padding: '4px' }}>
+                  <Avatar
+                    size={40}
+                    icon={<UserOutlined />}
+                    style={{
+                      marginRight: '10px',
+                      flexShrink: 0,
+                      alignSelf: 'center',
+                    }}
+                  />
+                  {item}
+                </Flex>
+              </HoverableSpace>
+            ))}
+        </div>
       </Modal>
     </>
   );

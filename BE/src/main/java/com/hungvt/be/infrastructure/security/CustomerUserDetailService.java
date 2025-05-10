@@ -1,6 +1,7 @@
 package com.hungvt.be.infrastructure.security;
 
 import com.hungvt.be.entity.User;
+import com.hungvt.be.infrastructure.utils.VariablesGlobal;
 import com.hungvt.be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,6 +27,7 @@ public class CustomerUserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException("Not found user by username: " + username);
         }
         User user = userOptional.get();
+        VariablesGlobal.USER = user;
 
         List<String> roles = List.of(user.getRoles().toString());
 

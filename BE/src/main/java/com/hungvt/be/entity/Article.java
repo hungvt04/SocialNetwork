@@ -5,6 +5,8 @@ import com.hungvt.be.infrastructure.constant.ArticleStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +22,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "article")
 public class Article extends PrimaryEntity {
+	
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	private User author;
 
     private String content;
 

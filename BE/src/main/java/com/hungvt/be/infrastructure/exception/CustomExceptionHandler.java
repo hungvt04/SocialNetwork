@@ -54,9 +54,8 @@ public class CustomExceptionHandler {
 
         logger.error("❌ NoHandlerFoundException: {}", detailMessage);
         ResponseError response = new ResponseError(message, detailMessage, null, code, moreInformation);
-        ResponseObject responseObject = ResponseObject.ofException(response, HttpStatus.NOT_FOUND);
-//        return ResponseObject.response(responseObject);
-        return new ResponseEntity<T>()
+        return new ResponseEntity<>(ResponseObject.ofException(response, HttpStatus.NOT_FOUND), 
+        		HttpStatus.NOT_FOUND);
     }
 
     private String getMessageFromHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
@@ -72,7 +71,7 @@ public class CustomExceptionHandler {
 
     // Xử lý lỗi sử dụng sai phương thức khi call api
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
-    public ResponseObject handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+    public ResponseEntity<?> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
 
         String message = getMessageFromHttpRequestMethodNotSupportedException(ex);
         String detailMessage = ex.getLocalizedMessage();
@@ -81,7 +80,8 @@ public class CustomExceptionHandler {
 
         logger.error("❌ HttpRequestMethodNotSupportedException: {}", detailMessage);
         ResponseError response = new ResponseError(message, detailMessage, null, code, moreInformation);
-        return ResponseObject.ofException(response, HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(ResponseObject.ofException(response, HttpStatus.METHOD_NOT_ALLOWED), 
+        		HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     private String getMessageFromHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException exception) {
@@ -97,7 +97,7 @@ public class CustomExceptionHandler {
 
     // Xử lý khi truyền sai định dạng request
     @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
-    public ResponseObject handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex) {
+    public ResponseEntity<?> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex) {
 
         String message = getMessageFromHttpMediaTypeNotSupportedException(ex);
         String detailMessage = ex.getLocalizedMessage();
@@ -106,12 +106,13 @@ public class CustomExceptionHandler {
 
         logger.error("❌ HttpMediaTypeNotSupportedException: {}", detailMessage);
         ResponseError response = new ResponseError(message, detailMessage, null, code, moreInformation);
-        return ResponseObject.ofException(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        return new ResponseEntity<>(ResponseObject.ofException(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE), 
+        		HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     // Xử lý trả về lỗi khi kết hợp với @Valid và các annotation validate
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseObject handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+    public ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
 
         String message = getMessage("MethodArgumentNotValidException.exception");
         String detailMessage = ex.getLocalizedMessage();
@@ -126,11 +127,12 @@ public class CustomExceptionHandler {
 
         logger.error("❌ MethodArgumentNotValidException: {}", detailMessage);
         ResponseError response = new ResponseError(message, detailMessage, errors, code, moreInformation);
-        return ResponseObject.ofException(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ResponseObject.ofException(response, HttpStatus.BAD_REQUEST), 
+        		HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = RestException.class)
-    public ResponseObject handleRestException(RestException exception) {
+    public ResponseEntity<?> handleRestException(RestException exception) {
         String message = exception.getError();
         String detailMessage = exception.getError();
         int code = 500;
@@ -138,11 +140,12 @@ public class CustomExceptionHandler {
 
         logger.error("❌ RestException: {}", detailMessage);
         ResponseError response = new ResponseError(message, detailMessage, null, code, moreInformation);
-        return ResponseObject.ofException(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(ResponseObject.ofException(response, HttpStatus.INTERNAL_SERVER_ERROR), 
+        		HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseObject handleRuntimeException(RuntimeException exception) {
+    public ResponseEntity<?> handleRuntimeException(RuntimeException exception) {
 
         String message = getMessage("RuntimeException.message");
         String detailMessage = exception.getLocalizedMessage();
@@ -151,11 +154,12 @@ public class CustomExceptionHandler {
 
         logger.error("❌ RuntimeException: {}", exception);
         ResponseError response = new ResponseError(message, detailMessage, null, code, moreInformation);
-        return ResponseObject.ofException(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(ResponseObject.ofException(response, HttpStatus.INTERNAL_SERVER_ERROR), 
+        		HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseObject handleAccessDeniedException(AccessDeniedException exception) {
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException exception) {
 
         String message = "Bạn không có quyền truy cập!!!";
         String detailMessage = exception.getLocalizedMessage();
@@ -164,20 +168,8 @@ public class CustomExceptionHandler {
 
         logger.error("❌ AccessDeniedException: {}", detailMessage);
         ResponseError response = new ResponseError(message, detailMessage, null, code, moreInformation);
-        return ResponseObject.ofException(response, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(ResponseObject.ofException(response, HttpStatus.FORBIDDEN), 
+        		HttpStatus.FORBIDDEN);
     }
-
-//    @ExceptionHandler({Exception.class})
-//    public ResponseObject handleAll(Exception exception) {
-//
-//        String message = getMessage("Exception.message");
-//        String detailMessage = exception.getLocalizedMessage();
-//        int code = 500;
-//        String moreInformation = MappingUrl.URL_EXCEPTION + code;
-//
-//        logger.error("❌ Exception: {}", detailMessage);
-//        ResponseError response = new ResponseError(message, detailMessage, null, code, moreInformation);
-//        return ResponseObject.ofException(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
 
 }

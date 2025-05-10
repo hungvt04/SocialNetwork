@@ -1,68 +1,32 @@
-/* :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Cấu hình thanh cuộn */
+::-webkit-scrollbar {
+  width: 8px; /* Chiều rộng thanh cuộn */
+  background-color: #f0f0f0; /* Màu nền của khu vực thanh cuộn */
+  border-radius: 10px; /* Bo tròn góc của thanh cuộn */
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* Cấu hình phần "track" (dải trượt) của thanh cuộn */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1); /* Nền nhạt cho dải trượt */
+  border-radius: 10px; /* Bo tròn góc của dải trượt */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1); /* Thêm bóng mờ cho dải trượt */
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+/* Cấu hình phần "thumb" (thanh trượt) */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #999999, #414141); /* Màu gradient cho thanh trượt */
+  border-radius: 10px; /* Bo tròn góc của thanh trượt */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng chuyển màu và di chuyển */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Cấu hình khi di chuột qua thanh trượt */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #fc5c7d, #6a82fb); /* Chuyển đổi gradient khi hover */
+  /* background: linear-gradient(50deg, #414141, #999999); */
+  transform: scale(1.1); /* Phóng to thanh trượt khi hover */
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+/* Cấu hình khi thanh cuộn không được sử dụng */
+::-webkit-scrollbar:disabled {
+  background: rgba(0, 0, 0, 0.1); /* Nền thanh cuộn khi không hoạt động */
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */

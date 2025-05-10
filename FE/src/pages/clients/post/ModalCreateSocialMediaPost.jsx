@@ -6,12 +6,13 @@ import {
   Flex,
   Input,
   Modal,
+  notification,
   Row,
   Select,
   Space,
   Typography,
 } from 'antd';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   GlobalOutlined,
   LockOutlined,
@@ -21,16 +22,18 @@ import {
 } from '@ant-design/icons';
 import { InboxOutlined } from '@ant-design/icons';
 import { Upload } from 'antd';
-import { API_COMMON_IMAGE, API_MANAGEMENT_ARTICLE } from '../../../../constants/BaseApi';
-import axiosInstance from '../../../../api/axiosInstance';
+import { API_COMMON_IMAGE, API_MANAGEMENT_ARTICLE } from '../../../constants/BaseApi';
+import axiosInstance from '../../../api/axiosInstance';
 import ModalTagUser from './ModalTagUser';
-import Loading from '../loading/Loading';
+import Loading from '../common/loading/Loading';
 
 const { Dragger } = Upload;
 const { TextArea } = Input;
 const { Text } = Typography;
 
 const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => {
+  const [api, contextHolder] = notification.useNotification();
+
   const [fileList, setFileList] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
 
@@ -71,39 +74,53 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
     setPreviewImages((prev) => prev.filter((image) => image.uid !== uid));
   };
 
-  const handlePostArticle = async () => {
-    setIsLoading(true);
+  const handlePostImage = async () => {
     const formData = new FormData();
 
     if (fileList && fileList.length > 0) {
       fileList.forEach((file) => {
         formData.append('files', file);
       });
+      const uploadRes = await axiosInstance.post(API_COMMON_IMAGE + '/uploads', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+      console.log({ uploadRes });
+
+      const uploadedUrls = uploadRes?.data?.data?.urls;
+      setFileList([]);
+      setPreviewImages([]);
+      return uploadedUrls;
     }
+  };
+
+  const handlePostArticle = async () => {
+    setIsLoading(true);
+    const imageUrls = await handlePostImage();
+
+    const articlePost = {
+      ...article,
+      images: imageUrls,
+    };
 
     try {
-      // Upload ảnh
-      // const uploadRes = await axiosInstance.post(API_COMMON_IMAGE + '/uploads', formData, {
-      //   headers: { 'Content-Type': 'multipart/form-data' },
-      //   withCredentials: true,
-      // });
-
-      // const uploadedUrls = uploadRes?.data?.data?.urls || [];
-
-      // // Tạo article hoàn chỉnh
-      // const newArticle = {
-      //   ...article,
-      //   images: [...article.images, ...uploadedUrls],
-      // };
-
-      // Gửi article hoàn chỉnh
-      console.log({ article });
-
-      const postRes = await axiosInstance.post(API_MANAGEMENT_ARTICLE, article);
-
+      const postRes = await axiosInstance.post(API_MANAGEMENT_ARTICLE, articlePost);
       console.log('Post article success:', postRes.data);
+
+      setArticle({
+        status: 'PRIVATE',
+        content: '',
+        images: [],
+        members: [],
+        hashtags: [],
+      });
     } catch (error) {
       console.error('Error:', error);
+      console.error('Error response:', error.response);
+
+      if (error?.response?.data) {
+        const moreInformation = error.response.data.moreInformation;
+      }
     } finally {
       setIsLoading(false);
     }
@@ -120,6 +137,7 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
 
   return (
     <div>
+      {contextHolder}
       {<Loading isLoading={isLoading} />}
       <Modal
         title="Tạo bài viết"
@@ -202,7 +220,6 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
             setArticle((prev) => ({
               ...prev,
               content: e.target.value,
-              hashtags: [...prev.hashtags, e.target.value.match(/#[\w\d_]+/g)],
             }));
           }}
         />

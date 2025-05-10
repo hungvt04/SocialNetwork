@@ -1,5 +1,4 @@
-import React from 'react';
-import { Card, Avatar, Typography, Button, Space, Flex, Row, Col, Divider } from 'antd';
+import { Avatar, Typography, Button, Space, Flex, Row, Col, Divider } from 'antd';
 import {
   EllipsisOutlined,
   LikeOutlined,

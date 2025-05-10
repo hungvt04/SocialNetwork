@@ -1,14 +1,14 @@
-import React from 'react';
-import HeaderClient from '../common/header/HeaderClient';
-import SocialMediaPost from '../common/post/SocialMediaPost';
-import CreateSocialMediaPost from '../common/post/CreateSocialMediaPost';
+import HeaderClient from '../header/HeaderClient';
+import CreateSocialMediaPost from '../post/CreateSocialMediaPost';
+import Feed from '../feed/Feed';
 
 const Dashboard = () => {
   return (
     <>
       <HeaderClient />
       <CreateSocialMediaPost />
-      <SocialMediaPost />
+      {/* <SocialMediaPost /> */}
+      <Feed />
     </>
   );
 };

@@ -44,9 +44,5 @@ public class ResponseObject {
     public static <T> ResponseObject ofException(T data, HttpStatus status) {
         return new ResponseObject(data, null, status);
     }
-    
-    public static ResponseEntity<ResponseObject> response(ResponseObject object) {
-    	return new ResponseEntity<ResponseObject>(object, object.getStatus());
-    }
 
 }
