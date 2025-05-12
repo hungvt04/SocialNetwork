@@ -10,7 +10,7 @@ const data1 = [
     authorName: 'Hùng Vũ',
     createdAt: '10 giờ trước',
     content: 'AHSHH \n abc',
-    urls: 'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/495104089_664252183245844_3878587684754354222_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=71_6qyjuxKEQ7kNvwFN2e_V&_nc_oc=Adm_irHOb8e6LkDbfFWbVjXxMNP30tAGxQG34SKg1cu6MBr_OAtET3rDgACh4ONTaU4&_nc_zt=23&_nc_ht=scontent.fhan14-2.fna&_nc_gid=rci0w0Kd6Qn_7IQz7lhN-A&oh=00_AfI837ALiAKKMTn-ervwch11hDh7MK4C0gvOS5H2EHldLg&oe=6820B646',
+    urls: 'https://scontent.fhan14-4.fna.fbcdn.net/v/t39.30808-6/494677317_4252578891637332_6129396017700470582_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=aa7b47&_nc_eui2=AeFrXpBo6b6oCjM4NrjTiCSgEo4gMxzsUfISjiAzHOxR8tOR2CiEdsIa29C00OD28Ir4CUg2MjENaDPHy32-Ii1p&_nc_ohc=J8qYKZT9PJ0Q7kNvwHOubAZ&_nc_oc=Adm6v9g_MOthzvck2ZxjpQga9oH-65paLBlBk42ZWzEL6JQ1pzkB-4xDVQSt5HtLm9c&_nc_zt=23&_nc_ht=scontent.fhan14-4.fna&_nc_gid=QFukD_IgP28mLYACPoPPFg&oh=00_AfL49uRLrBQUFQUKihWtzBLwNuyEfndKjjNcInOGV1xbxw&oe=68275AC7',
     totalReact: 100,
     totalComment: 30,
     totalShare: 9,
@@ -79,7 +79,7 @@ const Feed = () => {
             authorName={item.authorName}
             createdAt={item.createdAt}
             content={item.content}
-            urls={item.urls.split(/\s*,\s*/)}
+            urls={item?.urls?.split(/\s*,\s*/) || []}
             totalReact={item.totalReact}
             totalComment={item.totalComment}
             totalShare={item.totalShare}

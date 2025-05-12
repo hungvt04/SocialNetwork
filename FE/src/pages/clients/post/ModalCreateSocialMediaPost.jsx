@@ -215,6 +215,7 @@ const ModalCreateSocialMediaPost = ({ isModalOpen, handleOk, handleCancel }) => 
             boxShadow: 'none',
             outline: 'none',
             resize: 'none',
+            maxHeight: '120px',
           }}
           onChange={(e) => {
             setArticle((prev) => ({

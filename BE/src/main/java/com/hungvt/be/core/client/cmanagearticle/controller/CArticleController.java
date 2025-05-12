@@ -33,4 +33,9 @@ public class CArticleController {
         return ResponseEntity.ok(articleService.getAllArticles());
     }
 	
+//	@PostMapping
+//    public ResponseEntity<?> reactArticle() {
+//        return ResponseEntity.ok(articleService.getAllArticles());
+//    }
+	
 }

@@ -8,5 +8,7 @@ public interface CArticleService {
     ResponseObject getAllArticles();
 
     ResponseObject postArticle(CPostArticleRequest request);
+    
+    ResponseObject reactArticle();
 
 }

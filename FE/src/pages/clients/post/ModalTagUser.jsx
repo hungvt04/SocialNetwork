@@ -1,5 +1,5 @@
 import { Avatar, Button, Flex, Input, Modal, Select, Space, Typography } from 'antd';
-import React, { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { UserOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 

@@ -1,4 +1,4 @@
-import { Avatar, Typography, Button, Space, Flex, Row, Col, Divider, Popover } from 'antd';
+import { Avatar, Typography, Button, Space, Flex, Row, Col, Divider, Popover, Image } from 'antd';
 import {
   EllipsisOutlined,
   LikeOutlined,
@@ -102,22 +102,31 @@ const Article = ({
               <EllipsisOutlined style={{ fontSize: 20, color: '#555', cursor: 'pointer' }} />
             </Flex>
           </Col>
-
-          <Col span={24} style={{ padding: '0 15px 8px' }}>
-            {content}
-          </Col>
+          {urls.length > 0 ? (
+            <Col span={24} style={{ padding: '0 15px 8px' }}>
+              {content}
+            </Col>
+          ) : (
+            <Col
+              span={24}
+              style={{
+                padding: '0 15px 8px',
+                minHeight: '200px',
+                maxHeight: '400px',
+                backgroundColor: '#f0f0f0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text>{content}</Text>
+            </Col>
+          )}
           <Divider style={{ padding: '0px', margin: '0px' }} />
         </Row>
 
-        <img
-          style={{
-            cover: 'cover',
-            width: '100%',
-            height: '100%',
-          }}
-          alt="post"
-          src={urls[0]}
-        />
+        {urls.length > 0 && <Image src={urls[0]} alt="Image post" height={'100%'} width={'100%'} />}
+
         <Row>
           <Col span={24}>
             <Flex justify="space-around" align="center" style={{ padding: '8px 10px' }}>

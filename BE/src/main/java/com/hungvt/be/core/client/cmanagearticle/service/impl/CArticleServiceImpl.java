@@ -118,4 +118,9 @@ public class CArticleServiceImpl implements CArticleService {
         return ResponseObject.ofData(null, "Post article successfully");
     }
 
+	@Override
+	public ResponseObject reactArticle() {
+		return null;
+	}
+
 }
