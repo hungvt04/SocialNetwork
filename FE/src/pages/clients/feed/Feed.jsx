@@ -14,6 +14,7 @@ const data1 = [
     totalReact: 100,
     totalComment: 30,
     totalShare: 9,
+    react: 'like',
   },
   {
     articleId: '2',
@@ -50,7 +51,7 @@ const Feed = () => {
 
       setData([
         ...data,
-        ...response?.data?.data.map((item) => ({
+        ...response?.data.map((item) => ({
           ...item,
           totalReact: 100,
           totalComment: 30,
@@ -76,6 +77,7 @@ const Feed = () => {
         data.map((item) => (
           <Article
             key={item.articleId}
+            articleId={item.articleId}
             authorName={item.authorName}
             createdAt={item.createdAt}
             content={item.content}
@@ -83,6 +85,7 @@ const Feed = () => {
             totalReact={item.totalReact}
             totalComment={item.totalComment}
             totalShare={item.totalShare}
+            react={item.react}
           />
         ))}
     </>

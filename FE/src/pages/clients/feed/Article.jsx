@@ -1,16 +1,20 @@
 import { Avatar, Typography, Button, Space, Flex, Row, Col, Divider, Popover, Image } from 'antd';
 import {
   EllipsisOutlined,
+  LikeFilled,
   LikeOutlined,
   MessageOutlined,
   ShareAltOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useRef, useState } from 'react';
+import axiosInstance from '../../../api/axiosInstance';
+import { API_MANAGEMENT_ARTICLE } from '../../../constants/BaseApi';
 
 const { Text } = Typography;
 
 const Article = ({
+  articleId,
   authorName,
   createdAt,
   content,
@@ -18,6 +22,7 @@ const Article = ({
   totalReact,
   totalComment,
   totalShare,
+  react,
 }) => {
   const [open, setOpen] = useState(false);
   const timerRef = useRef(null);
@@ -57,8 +62,45 @@ const Article = ({
     </div>
   );
 
-  const handleReaction = (reaction) => {
+  const deleteReaction = async () => {
+    try {
+      const response = await axiosInstance.delete(API_MANAGEMENT_ARTICLE + `/delete/${articleId}`);
+
+      if (response.status === 200) {
+        console.log('Delete reaction successfully:', response.data);
+      }
+    } catch (error) {
+      console.error('Error data:', error);
+    } finally {
+      // setIsLoading(false);
+    }
+  };
+
+  const reactArticle = async (reaction) => {
+    try {
+      const response = await axiosInstance.post(API_MANAGEMENT_ARTICLE + `/react/${articleId}`, {
+        type: reaction.toUpperCase(),
+      });
+
+      if (response.status === 200) {
+        console.log('Reaction sent successfully:', response.data);
+      }
+    } catch (error) {
+      console.error('Error data:', error);
+    } finally {
+      // setIsLoading(false);
+    }
+  };
+
+  const handleReaction = async (reaction) => {
+    console.log(`You reacted with: ${articleId}`);
     console.log(`You reacted with: ${reaction}`);
+    console.log(`You reacted with: ${react}`);
+    if (reaction.toUpperCase() === 'Like'.toUpperCase() && react) {
+      deleteReaction();
+    } else {
+      reactArticle(reaction);
+    }
   };
 
   return (
@@ -139,17 +181,40 @@ const Article = ({
               >
                 <Button
                   type="text"
-                  icon={<LikeOutlined />}
+                  icon={react ? <LikeFilled /> : <LikeOutlined />}
+                  style={{
+                    color: react ? '#1677ff' : '#555',
+                    fontSize: '16px',
+                    padding: '0px 10px',
+                  }}
                   onMouseEnter={showPopover}
                   onMouseLeave={hidePopover}
+                  onClick={() => {
+                    handleReaction('Like');
+                    setOpen(false);
+                  }}
                 >
                   {totalReact} Thích
                 </Button>
               </Popover>
-              <Button type="text" icon={<MessageOutlined />}>
+              <Button
+                type="text"
+                icon={<MessageOutlined />}
+                style={{
+                  fontSize: '16px',
+                  padding: '0px 10px',
+                }}
+              >
                 {totalComment} Bình luận
               </Button>
-              <Button type="text" icon={<ShareAltOutlined />}>
+              <Button
+                type="text"
+                icon={<ShareAltOutlined />}
+                style={{
+                  fontSize: '16px',
+                  padding: '0px 10px',
+                }}
+              >
                 {totalShare} Chia sẻ
               </Button>
             </Flex>

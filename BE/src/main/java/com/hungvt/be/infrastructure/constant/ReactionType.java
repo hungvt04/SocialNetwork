@@ -1,5 +1,8 @@
 package com.hungvt.be.infrastructure.constant;
 
+import lombok.Getter;
+
+@Getter
 public enum ReactionType {
 	
 	LIKE("like"),
@@ -16,10 +19,6 @@ public enum ReactionType {
 
     ReactionType(String value) {
         this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     public static boolean contains(String testValue) {

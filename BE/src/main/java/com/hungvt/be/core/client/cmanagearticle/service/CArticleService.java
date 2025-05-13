@@ -8,7 +8,9 @@ public interface CArticleService {
     ResponseObject getAllArticles();
 
     ResponseObject postArticle(CPostArticleRequest request);
-    
-    ResponseObject reactArticle();
+
+    ResponseObject reactArticle(String articleId, String type);
+
+    ResponseObject deleteReactArticle(String articleId);
 
 }
