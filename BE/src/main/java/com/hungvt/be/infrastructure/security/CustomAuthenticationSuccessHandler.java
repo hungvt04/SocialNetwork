@@ -63,6 +63,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         user.setAvatar(picture);
         user = userRepository.save(user);
         VariablesGlobal.USER = user;
+
+        List<Token> tokens = tokenRepository.findTokensByUser(user.getId());
+        if(!tokens.isEmpty()) {
+            tokenRepository.deleteAll(tokens);
+        }
         
         CustomerUserDetails customerUserDetails = new CustomerUserDetails();
         customerUserDetails.setId(user.getId());
@@ -81,6 +86,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         token.setAccessToken(accessToken);
         token.setRefreshToken(refreshToken);
         token.setExpired(jwtUtils.getExpiredRefreshToken(refreshToken));
+        token.setUser(user);
         tokenRepository.save(token);
 
         TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken);

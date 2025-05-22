@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import "./css/ExceptionComponent.css";
+import { useNavigate } from 'react-router-dom';
+import './css/ExceptionComponent.css';
 
 const ExceptionComponent = ({ title, subTitle, route, titleButton }) => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const ExceptionComponent = ({ title, subTitle, route, titleButton }) => {
         <p>{subTitle}</p>
         <button onClick={() => navigate(route)}>{titleButton}</button>
       </div>
-	  </div>
+    </div>
   );
 };
 

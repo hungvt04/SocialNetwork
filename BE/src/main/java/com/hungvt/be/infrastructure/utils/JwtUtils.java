@@ -1,12 +1,7 @@
 package com.hungvt.be.infrastructure.utils;
 
 import com.hungvt.be.infrastructure.security.CustomerUserDetails;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,6 +69,7 @@ public class JwtUtils {
     }
 
     public Long getExpiredRefreshToken(String token) {
+
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
@@ -82,11 +78,21 @@ public class JwtUtils {
     }
 
     public Claims getClaims(String token) {
+
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String getIdFromToken(String token) {
+        Claims claims = getClaims(token);
+        String id = claims.get("id", String.class);
+        if (id != null && !id.isEmpty()) {
+            return id;
+        }
+        return claims.get("id", String.class);
     }
 
     public boolean isValidToken(String token) {

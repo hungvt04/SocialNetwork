@@ -1,9 +1,7 @@
 package com.hungvt.be.entity;
 
 import com.hungvt.be.entity.base.PrimaryEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +20,10 @@ public class Token extends PrimaryEntity {
 
     @Column(columnDefinition = "TEXT")
     private String refreshToken;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private Long expired;
 

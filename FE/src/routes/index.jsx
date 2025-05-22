@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Client from '@/layout/Client';
+import { ROUTE_EXCEPTION } from '@/constants/RouteException';
+import LoginComponent from '@/pages/auth/login/LoginComponent';
+import ExceptionComponent from '@/pages/exceptions/ExceptionComponent';
 import PrivateRoute from './PrivateRoute';
-import { LoginComponent } from '../pages/auth/login';
-import { OAuth2Callback } from '../pages/auth/oauth2';
-import { Dashboard } from '../pages/clients/dashboard';
-import { ROUTE_EXCEPTION } from './RouteException';
-import { ExceptionComponent } from '../pages/exceptions';
+import OAuth2Callback from '@/pages/auth/oauth2/OAuth2Callback';
 
 const AppRoutes = () => {
   return (
@@ -17,7 +17,7 @@ const AppRoutes = () => {
           path="/"
           element={
             <PrivateRoute role="USER">
-              <Dashboard />
+              <Client />
             </PrivateRoute>
           }
         />

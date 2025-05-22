@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { LOCAL_STORAGE_ACCESS_TOKEN } from '../constants/BaseApi';
-import Loading from '../pages/clients/common/loading/Loading';
-import { ROUTE_EXCEPTION } from '../routes/RouteException';
+import { LOCAL_STORAGE_ACCESS_TOKEN } from '@/constants/BaseApi';
+import { ROUTE_EXCEPTION } from '@/constants/RouteException';
 
 const axiosInstance = axios.create({
   headers: {
@@ -12,7 +11,8 @@ const axiosInstance = axios.create({
 // Gắn token tự động cho mỗi request
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN);
+    // const token = localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN);
+    const token = sessionStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -30,7 +30,8 @@ axiosInstance.interceptors.response.use(
     const status = error.response?.status;
 
     if (status === 401 || status === 403) {
-      localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
+      // localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
+      sessionStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
       ROUTE_EXCEPTION.forEach((route) => {
         if (status == route.props.title) {
           window.location.href = route.route;

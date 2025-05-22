@@ -1,5 +1,6 @@
 package com.hungvt.be.infrastructure.security;
 
+import com.hungvt.be.entity.Token;
 import com.hungvt.be.infrastructure.constant.MappingUrl;
 import com.hungvt.be.infrastructure.exception.AuthExceptionResponse;
 import com.hungvt.be.infrastructure.utils.JwtUtils;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -48,29 +50,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("Token from header: {}", token);
         if (token != null && !token.trim().isEmpty() && !token.equalsIgnoreCase("{{bearerToken}}")) {
 
-            log.info("Handle valid token and exist in the database.");
             boolean isValidToken = jwtUtils.isValidToken(token);
+            List<Token> tokens = tokenRepository.findTokensByAccessToken(token);
 
-            if (!isValidToken) {
+            if (!isValidToken || tokens.isEmpty()) {
                 authExceptionResponse.unauthorized();
+                log.info("Token is invalid!!!");
                 return;
             }
-            log.info("Token is valid!!!");
 
-            boolean isExists = tokenRepository.existsByAccessToken(token);
+            Claims claims = jwtUtils.getClaims(token);
+            String username = claims.get("email", String.class);
+            CustomerUserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if (isExists) {
-            	log.info("Token is found!!!");
-                Claims claims = jwtUtils.getClaims(token);
-                String username = claims.get("email", String.class);
-                CustomerUserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-                log.info("Handle add roles to securityContextHolder.");
-            }
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+            log.info("Token OK.");
         }
         filterChain.doFilter(request, response);
     }

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { LOCAL_STORAGE_ACCESS_TOKEN } from '../../../constants/BaseApi';
+import { LOCAL_STORAGE_ACCESS_TOKEN } from '@/constants/BaseApi';
 
 const LoginComponent = () => {
   useEffect(() => {
