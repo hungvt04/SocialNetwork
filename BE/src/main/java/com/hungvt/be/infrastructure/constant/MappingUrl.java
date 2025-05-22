@@ -14,6 +14,8 @@ public class MappingUrl {
 
     public static final String API_ARTICLE = API_VERSION + "/articles";
 
+    public static final String API_FRIEND = API_VERSION + "/friends";
+
     public static final String API_ROLE = API_VERSION + "/roles";
 
     public static final String API_DEPARTMENT = API_VERSION + "/departments";
