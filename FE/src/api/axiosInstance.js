@@ -11,6 +11,7 @@ const axiosInstance = axios.create({
 // Gắn token tự động cho mỗi request
 axiosInstance.interceptors.request.use(
   (config) => {
+    console.log('🚀 Request');
     // const token = localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN);
     const token = sessionStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN);
     if (token) {

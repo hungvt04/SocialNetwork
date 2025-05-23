@@ -17,6 +17,9 @@ export default defineConfig({
     },
   },
   define: {
-    global: {}, // 👈 Thêm dòng này để tránh lỗi `global is not defined`
+    global: 'globalThis',
   },
+  optimizeDeps: {
+    include: ['@stomp/stompjs', 'sockjs-client']
+  }
 });

@@ -9,14 +9,13 @@ const PrivateRoute = ({ role, children }) => {
 
   const isRole = result?.role.includes(role);
 
-  // return !token ? (
-  //   <Navigate to="/exception/401" />
-  // ) : isRole ? (
-  //   children
-  // ) : (
-  //   <Navigate to="/exception/403" />
-  // );
-  return children;
+  return !token ? (
+    <Navigate to="/exception/401" />
+  ) : isRole ? (
+    children
+  ) : (
+    <Navigate to="/exception/403" />
+  );
 };
 
 export default PrivateRoute;

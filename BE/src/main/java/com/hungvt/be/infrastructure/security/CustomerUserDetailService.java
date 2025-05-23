@@ -42,4 +42,27 @@ public class CustomerUserDetailService implements UserDetailsService {
         return userDetails;
     }
 
+    public CustomerUserDetails loadUserById(String id) throws UsernameNotFoundException {
+
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Not found user by id: " + id);
+        }
+        User user = userOptional.get();
+        VariablesGlobal.USER = user;
+
+        List<String> roles = List.of(user.getRoles().toString());
+
+        CustomerUserDetails userDetails = new CustomerUserDetails();
+
+        userDetails.setId(user.getId());
+        userDetails.setUsername(user.getUsername());
+        userDetails.setRoles(roles);
+        userDetails.setPassword(null);
+        userDetails.setFullname(user.getFullName());
+        userDetails.setUsername(user.getUsername());
+        log.info("Tiến hành lấy thông tin người dùng từ database.");
+        return userDetails;
+    }
+
 }

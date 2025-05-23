@@ -47,6 +47,9 @@ public class CustomerUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
+        if(this.username == null) {
+            return this.id;
+        }
         return this.username;
     }
 
