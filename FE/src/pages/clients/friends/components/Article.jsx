@@ -7,11 +7,9 @@ import {
   ShareAltOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useEffect, useRef, useState } from 'react';
-import { API_MANAGEMENT_ARTICLE, LOCAL_STORAGE_ACCESS_TOKEN } from '@/constants/BaseApi';
+import { useRef, useState } from 'react';
+import { API_MANAGEMENT_ARTICLE } from '@/constants/BaseApi';
 import axiosInstance from '@/api/axiosInstance';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 
 const { Text } = Typography;
 
@@ -28,13 +26,6 @@ const Article = ({
 }) => {
   const [open, setOpen] = useState(false);
   const timerRef = useRef(null);
-
-  // useEffect(() => {
-  //   if (messages.length === 0) {
-  //     console.log('📩 Received messages:', messages);
-
-  //   }
-  // }, [messages]);
 
   const showPopover = () => {
     clearTimeout(timerRef.current);
@@ -116,11 +107,9 @@ const Article = ({
     <>
       <div
         style={{
-          maxWidth: 600,
-          margin: '20px auto',
+          margin: '0px auto',
           borderRadius: '10px',
           overflow: 'hidden',
-          border: '1px solid rgba(56, 56, 56, 0.23)',
         }}
       >
         <Row

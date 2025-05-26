@@ -1,13 +1,13 @@
 package com.hungvt.be.infrastructure.websocket.config;
 
 import com.hungvt.be.infrastructure.constant.Topic;
-import com.hungvt.be.infrastructure.exception.RestException;
 import com.hungvt.be.infrastructure.security.CustomerUserDetailService;
 import com.hungvt.be.infrastructure.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -73,13 +73,24 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
                 // Kiểm tra người kết nối có phải là user1 hoặc user2 không
                 if (!user1.equals(userId) && !user2.equals(userId)) {
                     log.error("User not found: {}", userId);
-                    createErrorMessage(accessor, "USER_NOT_PERMISSION", "Not permission");
-                    throw new RestException("You do not have permission to access this resource");
-//                    try {
-//                        throw new AccessDeniedException("User not allowed in this private channel");
-//                    } catch (AccessDeniedException e) {
-//                        throw new RuntimeException(e);
-//                    }
+                    try {
+                        // Đóng session ngay lập tức
+                        if (accessor.getSessionId() != null) {
+                            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(StompCommand.ERROR);
+                            headerAccessor.setSessionId(accessor.getSessionId());
+                            headerAccessor.setLeaveMutable(true);
+                            messagingTemplate.convertAndSendToUser(
+                                    accessor.getSessionId(),
+                                    "/queue/errors",
+                                    "Not permission",
+                                    headerAccessor.getMessageHeaders()
+                            );
+                        }
+                    } catch (Exception e) {
+                        log.error("Failed to send error message", e);
+                    }
+                    // Trả về null để ngắt kết nối
+                    return null;
                 }
             }
 

@@ -49,8 +49,31 @@ const Feed = () => {
       },
       onStompError: (frame) => {
         console.error('❌ STOMP error:', frame);
-        const errorMessage = frame.headers?.message || 'Unknown error';
-        alert(`WebSocket Error: ${errorMessage}`);
+
+        // Lấy thông tin lỗi chi tiết
+        const errorCode = frame.headers['error-code'] || 'UNKNOWN_ERROR';
+        const errorMessage = frame.headers?.message || frame.body || 'Unknown error';
+
+        // Hiển thị thông báo phù hợp
+        if (errorCode === 'USER_NOT_PERMISSION') {
+          alert(`Bạn không có quyền truy cập: ${errorMessage}`);
+          // Hủy subscription tương ứng
+          const destination = frame.headers.destination;
+          if (destination && this.subscriptions[destination]) {
+            this.subscriptions[destination].unsubscribe();
+            delete this.subscriptions[destination];
+          }
+        } else {
+          alert(`Lỗi kết nối: ${errorMessage}`);
+        }
+
+        // Log đầy đủ thông tin lỗi
+        console.error('Error details:', {
+          code: errorCode,
+          message: errorMessage,
+          headers: frame.headers,
+          body: frame.body,
+        });
       },
 
       // onStompError: (frame) => {
