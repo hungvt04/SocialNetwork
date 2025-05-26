@@ -32,13 +32,45 @@ const Feed = () => {
         //   setMessage(message?.body);
         // });
 
-        subscriptionRef.current = stompClient.subscribe('/topic/messages', (message) => {
-          const receivedMessage = JSON.parse(message.body);
-          console.log('Nhận tin nhắn 1-1:', receivedMessage);
-          // Xử lý tin nhắn ở đây
-        });
+        subscriptionRef.current = stompClient.subscribe(
+          '/topic/chat-private/7d1d71ee-16b6-438b-825d-680c1d0fd7d6/7503409c-81c5-4d33-8d0d-6bcae6bfff24',
+          (message) => {
+            const receivedMessage = JSON.parse(message.body);
+            console.log('Nhận tin nhắn 1-1:', receivedMessage);
+            // Xử lý tin nhắn ở đây
+          },
+          // {
+          //   onError: (error) => {
+          //     console.error('Subscription error:', error);
+          //     alert('Subscription error: ' + error.headers.message);
+          //   },
+          // },
+        );
       },
+      onStompError: (frame) => {
+        console.error('❌ STOMP error:', frame);
+        const errorMessage = frame.headers?.message || 'Unknown error';
+        alert(`WebSocket Error: ${errorMessage}`);
+      },
+
+      // onStompError: (frame) => {
+      //   alert('Broker error: ' + frame.headers['message']);
+      //   if (subscriptionRef.current) {
+      //     subscriptionRef.current.unsubscribe();
+      //     console.log('🔌 Đã huỷ đăng ký khỏi topic do lỗi WebSocket');
+      //     subscriptionRef.current = null;
+      //   }
+
+      //   if (stompClientRef.current) {
+      //     stompClientRef.current.deactivate(); // Gửi DISCONNECT và đóng socket
+      //     stompClientRef.current = null;
+      //   }
+      // },
     });
+    stompClient.onWebSocketError = function (event) {
+      console.error('WebSocket Error', event);
+    };
+
     stompClient.activate();
     stompClientRef.current = stompClient;
   };
@@ -70,16 +102,21 @@ const Feed = () => {
   };
 
   const sendMessage = () => {
+    const token = sessionStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN);
     const client = stompClientRef.current;
 
     if (client && client.connected) {
       client.publish({
-        destination: '/app/chat/private/939d22c0-0661-4f8f-b1a3-b91663fa8d00',
+        destination:
+          '/app/chat-private/7d1d71ee-16b6-438b-825d-680c1d0fd7d6/7503409c-81c5-4d33-8d0d-6bcae6bfff24',
         body: JSON.stringify({
-          receiverId: '939d22c0-0661-4f8f-b1a3-b91663fa8d00',
+          receiverId: '7503409c-81c5-4d33-8d0d-6bcae6bfff24',
           content: 'Hello from client',
           timestamp: new Date().getTime(),
         }),
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       console.log('📤 Sent message to /app/chat/private ');
     } else {

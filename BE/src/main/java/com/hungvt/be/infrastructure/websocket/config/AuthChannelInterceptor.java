@@ -1,7 +1,8 @@
 package com.hungvt.be.infrastructure.websocket.config;
 
+import com.hungvt.be.infrastructure.constant.Topic;
+import com.hungvt.be.infrastructure.exception.RestException;
 import com.hungvt.be.infrastructure.security.CustomerUserDetailService;
-import com.hungvt.be.infrastructure.security.CustomerUserDetails;
 import com.hungvt.be.infrastructure.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +12,10 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Principal;
 import java.util.Map;
 
 @Slf4j
@@ -27,70 +27,76 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 
     private final CustomerUserDetailService userDetailsService;
 
+//    private final SimpMessagingTemplate messagingTemplate;
+
+    /**
+     * Khi thực hiện CONNECT thì destination chưa có giá trị
+     * mà destination có giá trị khi thực hiện SUBSCRIBE, SEND,...
+     */
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+        String destination = accessor.getDestination();
+//        List<String> nativeHeaders = new ArrayList<>();
 
         log.info("PreSend command: {}", accessor.getCommand());
-        log.info("");
 
-        // Xử lý CONNECT - thiết lập authentication ban đầu
+        String authHeader = accessor.getFirstNativeHeader("Authorization");
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-            try {
-                String authHeader = accessor.getFirstNativeHeader("Authorization");
-                if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                    String token = authHeader.substring(7);
-                    String id = jwtUtils.getIdFromToken(token);
-
-                    CustomerUserDetails userDetails = userDetailsService.loadUserById(id);
-                    Principal principal = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-
-                    // Set cả Principal và lưu vào session
-                    accessor.setUser(principal);
-                    if (sessionAttributes != null) {
-                        sessionAttributes.put("userId", id);
-                        sessionAttributes.put("principal", principal); // Lưu cả principal object
-                    }
-
-                    log.info("Authenticated user: {}", principal.getName());
-                } else {
-                    log.warn("Missing or invalid Authorization header");
-                    return createErrorMessage(accessor, "AUTH_ERROR", "Missing or invalid Authorization header");
-                }
-            } catch (Exception e) {
-                log.error("WebSocket token processing error: ", e);
-                return null;
-            }
-        }
-        // Với các command khác, khôi phục Principal từ session nếu cần
-        else if (accessor.getUser() == null && sessionAttributes != null) {
-            Principal principal = (Principal) sessionAttributes.get("principal");
-            if (principal != null) {
-                accessor.setUser(principal);
-                log.info("Restored principal from session: {}", principal.getName());
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                String userId = jwtUtils.getIdFromToken(token);
+                assert sessionAttributes != null;
+                sessionAttributes.put("userId", userId);
             } else {
-                log.warn("No principal found in session attributes");
+                log.warn("Missing or invalid Authorization header");
+                return createErrorMessage(accessor, "AUTH_ERROR", "Not found token!!!");
             }
         }
-        return createErrorMessage(accessor, "AUTH_ERROR", "Missing or invalid Authorization header");
 
-//        if (StompCommand.SEND.equals(accessor.getCommand())) {
-//            log.info("SEND command detected");
-//            log.info("Current principal: {}",
-//                    accessor.getUser() != null ? accessor.getUser().getName() : "null");
-//            if (sessionAttributes != null) {
-//                log.info("Session attributes: {}", sessionAttributes);
-//            }
-//        }
-//
-//        return message;
+        if (!StompCommand.CONNECT.equals(accessor.getCommand())) {
+            log.info("destination: {}", destination);
+            // Lấy userId từ sessionAttributes
+            assert sessionAttributes != null;
+            String userId = (String) sessionAttributes.get("userId");
+            if (destination != null && destination.contains(Topic.TOPIC_CHAT_PRIVATE)) {
+                String regex = Topic.TOPIC_CHAT_PRIVATE + "/{user1}/{user2}";
+                String user1 = getDestinationVariable(destination, regex, "user1");
+                String user2 = getDestinationVariable(destination, regex, "user2");
+                log.info("user1: {}", user1);
+                log.info("user2: {}", user2);
+                if (user1 == null || user2 == null) {
+                    log.error("Invalid destination format: {}", destination);
+                    return createErrorMessage(accessor, "DESTINATION_ERROR", "Invalid destination format");
+                }
+                // Kiểm tra người kết nối có phải là user1 hoặc user2 không
+                if (!user1.equals(userId) && !user2.equals(userId)) {
+                    log.error("User not found: {}", userId);
+                    createErrorMessage(accessor, "USER_NOT_PERMISSION", "Not permission");
+                    throw new RestException("You do not have permission to access this resource");
+//                    try {
+//                        throw new AccessDeniedException("User not allowed in this private channel");
+//                    } catch (AccessDeniedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+                }
+            }
+
+            if (destination != null && destination.contains(Topic.TOPIC_CHAT_GROUP)) {
+                String regex = Topic.TOPIC_CHAT_GROUP + "/{groupId}";
+                String groupId = getDestinationVariable(destination, regex, "groupId");
+                log.info("groupId: {}", groupId);
+            }
+
+        }
+
+        return message;
     }
 
     private Message<?> createErrorMessage(StompHeaderAccessor accessor, String errorCode, String errorMessage) {
         log.error("WebSocket connection error [{}]: {}", errorCode, errorMessage);
-
+        log.error("errorMessage: {}", errorMessage);
         // Tạo headers cho message lỗi
         StompHeaderAccessor errorAccessor = StompHeaderAccessor.create(StompCommand.ERROR);
         errorAccessor.setMessage(errorMessage);
@@ -101,6 +107,24 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
                 errorMessage.getBytes(StandardCharsets.UTF_8),
                 errorAccessor.getMessageHeaders()
         );
+    }
+
+    private String getDestinationVariable(String destination, String regex, String variableName) {
+
+        log.info("Destination: {}", destination);
+        log.info("Regex: {}", regex);
+        log.info("Variable name: {}", variableName);
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        if (pathMatcher.match(regex, destination)) {
+            Map<String, String> variables = pathMatcher.extractUriTemplateVariables(
+                    regex,
+                    destination
+            );
+
+            return variables.get(variableName);
+        }
+        log.error("Destination does not match the expected pattern: {}", destination);
+        return null;
     }
 
 }
