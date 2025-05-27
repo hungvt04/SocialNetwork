@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -75,17 +74,17 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
                     log.error("User not found: {}", userId);
                     try {
                         // Đóng session ngay lập tức
-                        if (accessor.getSessionId() != null) {
-                            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(StompCommand.ERROR);
-                            headerAccessor.setSessionId(accessor.getSessionId());
-                            headerAccessor.setLeaveMutable(true);
-                            messagingTemplate.convertAndSendToUser(
-                                    accessor.getSessionId(),
-                                    "/queue/errors",
-                                    "Not permission",
-                                    headerAccessor.getMessageHeaders()
-                            );
-                        }
+//                        if (accessor.getSessionId() != null) {
+//                            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(StompCommand.ERROR);
+//                            headerAccessor.setSessionId(accessor.getSessionId());
+//                            headerAccessor.setLeaveMutable(true);
+//                            messagingTemplate.convertAndSendToUser(
+//                                    accessor.getSessionId(),
+//                                    "/queue/errors",
+//                                    "Not permission",
+//                                    headerAccessor.getMessageHeaders()
+//                            );
+//                        }
                     } catch (Exception e) {
                         log.error("Failed to send error message", e);
                     }

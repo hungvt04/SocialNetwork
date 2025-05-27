@@ -6,6 +6,7 @@ import Loading from '@/pages/clients/common/loading/Loading';
 import { Button } from 'antd';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { parseJwt } from '@/utils/Helper';
 
 const Feed = () => {
   const [data, setData] = useState([]);
@@ -27,25 +28,31 @@ const Feed = () => {
       },
       onConnect: () => {
         console.log('✅ Connected to WebSocket');
-        // subscriptionRef.current = stompClient.subscribe('/topic/notification', (message) => {
-        //   console.log('📩 Received message:', message?.body);
-        //   setMessage(message?.body);
-        // });
+        const payload = parseJwt(token);
+        console.log('📜 Payload:', payload);
 
         subscriptionRef.current = stompClient.subscribe(
-          '/topic/chat-private/7d1d71ee-16b6-438b-825d-680c1d0fd7d6/7503409c-81c5-4d33-8d0d-6bcae6bfff24',
+          '/topic/notification/' + payload?.id,
           (message) => {
-            const receivedMessage = JSON.parse(message.body);
-            console.log('Nhận tin nhắn 1-1:', receivedMessage);
-            // Xử lý tin nhắn ở đây
+            console.log('📩 Received message:', message?.body);
+            alert(message?.body);
           },
-          // {
-          //   onError: (error) => {
-          //     console.error('Subscription error:', error);
-          //     alert('Subscription error: ' + error.headers.message);
-          //   },
-          // },
         );
+
+        // subscriptionRef.current = stompClient.subscribe(
+        //   '/topic/chat-private/7d1d71ee-16b6-438b-825d-680c1d0fd7d6/7503409c-81c5-4d33-8d0d-6bcae6bfff24',
+        //   (message) => {
+        //     const receivedMessage = JSON.parse(message.body);
+        //     console.log('Nhận tin nhắn 1-1:', receivedMessage);
+        //     // Xử lý tin nhắn ở đây
+        //   },
+        //   // {
+        //   //   onError: (error) => {
+        //   //     console.error('Subscription error:', error);
+        //   //     alert('Subscription error: ' + error.headers.message);
+        //   //   },
+        //   // },
+        // );
       },
       onStompError: (frame) => {
         console.error('❌ STOMP error:', frame);
@@ -75,20 +82,6 @@ const Feed = () => {
           body: frame.body,
         });
       },
-
-      // onStompError: (frame) => {
-      //   alert('Broker error: ' + frame.headers['message']);
-      //   if (subscriptionRef.current) {
-      //     subscriptionRef.current.unsubscribe();
-      //     console.log('🔌 Đã huỷ đăng ký khỏi topic do lỗi WebSocket');
-      //     subscriptionRef.current = null;
-      //   }
-
-      //   if (stompClientRef.current) {
-      //     stompClientRef.current.deactivate(); // Gửi DISCONNECT và đóng socket
-      //     stompClientRef.current = null;
-      //   }
-      // },
     });
     stompClient.onWebSocketError = function (event) {
       console.error('WebSocket Error', event);
@@ -100,15 +93,9 @@ const Feed = () => {
 
   useEffect(() => {
     connectWs();
-  }, []);
 
-  useEffect(() => {
-    if (message && message.length > 0) {
-      console.log('📩 Received message:', message);
-      alert(message);
-      setMessage('');
-    }
-  }, [message]);
+    fetchData();
+  }, []);
 
   const sendNotification = () => {
     const client = stompClientRef.current;
@@ -167,10 +154,6 @@ const Feed = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   return (
     <>

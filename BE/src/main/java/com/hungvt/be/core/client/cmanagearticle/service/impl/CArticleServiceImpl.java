@@ -8,11 +8,13 @@ import com.hungvt.be.entity.*;
 import com.hungvt.be.infrastructure.common.model.response.ResponseObject;
 import com.hungvt.be.infrastructure.constant.ArticleStatus;
 import com.hungvt.be.infrastructure.constant.ReactionType;
+import com.hungvt.be.infrastructure.constant.Topic;
 import com.hungvt.be.infrastructure.exception.RestException;
 import com.hungvt.be.infrastructure.utils.GenerateUUID;
 import com.hungvt.be.infrastructure.utils.VariablesGlobal;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -39,6 +41,8 @@ public class CArticleServiceImpl implements CArticleService {
     private final CAReactRepository reactRepository;
 
     private final CAUserReactTempRepository userReactTempRepository;
+
+    private final SimpMessagingTemplate messagingTemplate;
 
 
     private void handleHashtags(Article article, List<String> hashtags) {
@@ -99,6 +103,8 @@ public class CArticleServiceImpl implements CArticleService {
         Map<String, Object> response = new HashMap<>();
         List<CGetArticleResponse> infoArticles = articleRepository.getInfoArticle();
 
+        messagingTemplate.convertAndSend(Topic.TOPIC_NOTIFICATION + "/" + VariablesGlobal.USER.getId(),
+                "Bạn nhận được thông báo mới.");
 
         return ResponseObject.ofData(articleRepository.getInfoArticle());
     }
@@ -156,6 +162,8 @@ public class CArticleServiceImpl implements CArticleService {
         }
 
         userReactTempRepository.save(userReactTemp);
+        messagingTemplate.convertAndSend(Topic.TOPIC_NOTIFICATION + "/" + VariablesGlobal.USER.getId(),
+                "Bạn vừa react.");
 
         return ResponseObject.ofData(null);
     }

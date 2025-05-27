@@ -8,9 +8,11 @@ import com.hungvt.be.entity.Friends;
 import com.hungvt.be.entity.User;
 import com.hungvt.be.infrastructure.common.model.response.ResponseObject;
 import com.hungvt.be.infrastructure.constant.FriendStatus;
+import com.hungvt.be.infrastructure.constant.Topic;
 import com.hungvt.be.infrastructure.exception.RestException;
 import com.hungvt.be.infrastructure.utils.VariablesGlobal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +24,8 @@ public class CFriendServiceImpl implements CFriendService {
     private final CFFriendsRepository friendsRepository;
 
     private final CFUserRepository userRepository;
+
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     public ResponseObject getAllFriends(CFGetFriendRequest request) {
@@ -48,6 +52,8 @@ public class CFriendServiceImpl implements CFriendService {
         friends.setUser2(user2);
         friends.setFriendStatus(FriendStatus.PENDING);
         friendsRepository.save(friends);
+        messagingTemplate.convertAndSend(Topic.TOPIC_NOTIFICATION + "/" + user2Id,
+                "Bạn nhận được lời mời kết bạn mới.");
 
         return ResponseObject.ofData(null, "Friend request sent successfully!!!");
     }
