@@ -14,6 +14,8 @@ export const API_MANAGEMENT_USER = PREFIX_API + '/users';
 
 export const API_MANAGEMENT_ARTICLE = PREFIX_API + '/articles';
 
+export const API_MANAGEMENT_FRIENDS = PREFIX_API + '/friends';
+
 // AUTH
 export const API_AUTH_LOGIN = API_MANAGEMENT_USER + '/login';
 

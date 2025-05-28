@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { useRef, useState } from 'react';
 import { API_MANAGEMENT_ARTICLE } from '@/constants/BaseApi';
-import axiosInstance from '@/api/axiosInstance';
+import axiosInstance from '@/service/api/axiosInstance';
 
 const { Text } = Typography;
 

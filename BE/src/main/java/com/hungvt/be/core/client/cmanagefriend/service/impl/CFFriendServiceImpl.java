@@ -1,15 +1,19 @@
 package com.hungvt.be.core.client.cmanagefriend.service.impl;
 
 import com.hungvt.be.core.client.cmanagefriend.model.request.CFGetFriendRequest;
+import com.hungvt.be.core.client.cmanagefriend.model.request.CFGetFriendRequestsRequest;
+import com.hungvt.be.core.client.cmanagefriend.model.request.CFGetSuggestedPeopleRequest;
 import com.hungvt.be.core.client.cmanagefriend.repository.CFFriendsRepository;
 import com.hungvt.be.core.client.cmanagefriend.repository.CFUserRepository;
-import com.hungvt.be.core.client.cmanagefriend.service.CFriendService;
+import com.hungvt.be.core.client.cmanagefriend.service.CFFriendService;
 import com.hungvt.be.entity.Friends;
 import com.hungvt.be.entity.User;
+import com.hungvt.be.infrastructure.common.model.response.PageableObject;
 import com.hungvt.be.infrastructure.common.model.response.ResponseObject;
 import com.hungvt.be.infrastructure.constant.FriendStatus;
 import com.hungvt.be.infrastructure.constant.Topic;
 import com.hungvt.be.infrastructure.exception.RestException;
+import com.hungvt.be.infrastructure.utils.Helper;
 import com.hungvt.be.infrastructure.utils.VariablesGlobal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -19,7 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CFriendServiceImpl implements CFriendService {
+public class CFFriendServiceImpl implements CFFriendService {
 
     private final CFFriendsRepository friendsRepository;
 
@@ -38,11 +42,33 @@ public class CFriendServiceImpl implements CFriendService {
     }
 
     @Override
+    public ResponseObject getSuggestedPeople(CFGetSuggestedPeopleRequest request) {
+
+        request.setCurrentUserId(VariablesGlobal.USER.getId());
+        return ResponseObject.ofData(PageableObject.of(friendsRepository.getSuggestedPeople(
+                        Helper.createPageable(request),
+                        request
+                ))
+        );
+    }
+
+    @Override
+    public ResponseObject getFriendRequests(CFGetFriendRequestsRequest request) {
+
+        request.setCurrentUserId(VariablesGlobal.USER.getId());
+        return ResponseObject.ofData(PageableObject.of(friendsRepository.getFriendRequests(
+                        Helper.createPageable(request),
+                        request
+                ))
+        );
+    }
+
+    @Override
     public ResponseObject postFriend(String user2Id) {
 
         User user1 = VariablesGlobal.USER;
         User user2 = this.getUserById(user2Id);
-        List<Friends> friendsList = friendsRepository.findByUser1AndUser2(user1, user2);
+        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
         if (!friendsList.isEmpty()) {
             throw new RestException("Friend request already exists");
         }
@@ -63,7 +89,7 @@ public class CFriendServiceImpl implements CFriendService {
 
         User user1 = VariablesGlobal.USER;
         User user2 = this.getUserById(userId);
-        List<Friends> friendsList = friendsRepository.findByUser1AndUser2(user1, user2);
+        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
         if (friendsList.isEmpty()) {
             throw new RestException("You cannot unfriend this user because you are not friends yet!!!");
         }
@@ -73,11 +99,11 @@ public class CFriendServiceImpl implements CFriendService {
     }
 
     @Override
-    public ResponseObject postAcceptFriend(String user1Id) {
+    public ResponseObject putAcceptFriend(String user1Id) {
 
         User user1 = this.getUserById(user1Id);
         User user2 = VariablesGlobal.USER;
-        List<Friends> friendsList = friendsRepository.findByUser1AndUser2(user1, user2);
+        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
         if (friendsList.isEmpty()) {
             throw new RestException("Friend request not found. You can only accept or reject an existing friend request!!!");
         }
@@ -88,11 +114,11 @@ public class CFriendServiceImpl implements CFriendService {
     }
 
     @Override
-    public ResponseObject postRejectFriend(String user1Id) {
+    public ResponseObject putRejectFriend(String user1Id) {
 
         User user1 = this.getUserById(user1Id);
         User user2 = VariablesGlobal.USER;
-        List<Friends> friendsList = friendsRepository.findByUser1AndUser2(user1, user2);
+        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
         if (friendsList.isEmpty()) {
             throw new RestException("Friend request not found. You can only accept or reject an existing friend request!!!");
         }
@@ -103,11 +129,11 @@ public class CFriendServiceImpl implements CFriendService {
     }
 
     @Override
-    public ResponseObject postBlockFriend(String userId) {
+    public ResponseObject putBlockFriend(String userId) {
 
         User user1 = this.getUserById(userId);
         User user2 = VariablesGlobal.USER;
-        List<Friends> friendsList = friendsRepository.findByUser1AndUser2(user1, user2);
+        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
         if (friendsList.isEmpty()) {
             throw new RestException("Friend request not found. You can only accept or reject an existing friend request!!!");
         }

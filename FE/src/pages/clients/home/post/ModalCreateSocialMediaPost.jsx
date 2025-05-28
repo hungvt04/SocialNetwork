@@ -23,7 +23,7 @@ import {
 import { InboxOutlined } from '@ant-design/icons';
 import { Upload } from 'antd';
 import { API_COMMON_IMAGE, API_MANAGEMENT_ARTICLE } from '@/constants/BaseApi';
-import axiosInstance from '@/api/axiosInstance';
+import axiosInstance from '@/service/api/axiosInstance';
 import ModalTagUser from './ModalTagUser';
 import Loading from '../../common/loading/Loading';
 

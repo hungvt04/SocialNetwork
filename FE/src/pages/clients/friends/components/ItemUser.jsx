@@ -1,11 +1,37 @@
+import { LOCAL_STORAGE_ACCESS_TOKEN } from '@/constants/BaseApi';
+import {
+  deleteFriend,
+  postFriend,
+  putAcceptFriend,
+  putRejectFriend,
+} from '@/service/client/friends';
+import { parseJwt } from '@/utils/Helper';
 import { Button, Col, Flex, Row, Typography } from 'antd';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const { Text } = Typography;
 
-const ItemUser = ({ user, friendStatus, mutualFriendsCount }) => {
+const ItemUser = ({ user, isSuggest, mutualFriendsCount }) => {
   const navigate = useNavigate();
+  const token = sessionStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN);
+  const payload = parseJwt(token);
+
+  const handleAddFriendOrConfirm = async (userId) => {
+    if (isSuggest) {
+      await postFriend(userId);
+    } else {
+      await putAcceptFriend(userId);
+    }
+  };
+
+  const handleRejectOrDeleteSuggest = async (userId) => {
+    if (isSuggest) {
+      await deleteFriend(userId);
+    } else {
+      await putRejectFriend(userId);
+    }
+  };
 
   return (
     <>
@@ -29,13 +55,13 @@ const ItemUser = ({ user, friendStatus, mutualFriendsCount }) => {
               fontWeight: '500',
             }}
           >
-            {user?.name || 'Tên người dùng'}
+            {user?.fullName || 'Tên người dùng'}
           </Text>
         </div>
 
         <Row>
           <Col span={24}>
-            {!friendStatus && (
+            {!isSuggest && (
               <span
                 align="center"
                 style={{
@@ -49,16 +75,17 @@ const ItemUser = ({ user, friendStatus, mutualFriendsCount }) => {
               <Button
                 type="text"
                 style={{
-                  color: friendStatus ? 'rgb(255, 255, 255)' : 'rgb(0, 100, 209)',
-                  backgroundColor: friendStatus ? 'rgb(8, 102, 255)' : 'rgb(235, 245, 255)',
+                  color: isSuggest ? 'rgb(255, 255, 255)' : 'rgb(0, 100, 209)',
+                  backgroundColor: isSuggest ? 'rgb(8, 102, 255)' : 'rgb(235, 245, 255)',
                   fontSize: '16px',
                   fontWeight: '500',
                   padding: '0px 10px',
                   width: '100%',
                   marginTop: '10px',
                 }}
+                onClick={() => handleAddFriendOrConfirm(user.id)}
               >
-                Xác nhận
+                {isSuggest ? 'Thêm bạn bè' : 'Xác nhận'}
               </Button>
               <Button
                 type="text"
@@ -71,6 +98,7 @@ const ItemUser = ({ user, friendStatus, mutualFriendsCount }) => {
                   width: '100%',
                   marginTop: '10px',
                 }}
+                onClick={() => handleRejectOrDeleteSuggest(user.id)}
               >
                 Xóa
               </Button>

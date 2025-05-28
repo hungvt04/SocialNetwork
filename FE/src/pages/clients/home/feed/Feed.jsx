@@ -1,5 +1,5 @@
 import Article from './Article';
-import axiosInstance from '@/api/axiosInstance';
+import axiosInstance from '@/service/api/axiosInstance';
 import { API_MANAGEMENT_ARTICLE, LOCAL_STORAGE_ACCESS_TOKEN } from '@/constants/BaseApi';
 import { useEffect, useRef, useState } from 'react';
 import Loading from '@/pages/clients/common/loading/Loading';
