@@ -19,12 +19,14 @@ public interface CFFriendsRepository extends FriendsRepository {
             	u.avatar,
             	u.full_name
             FROM
-            	friends f RIGHT JOIN `user` u ON
-            	u.id = f.user1_id
-            	OR u.id = f.user2_id
+            	`user` u
             WHERE
-            	u.id <> :#{#request.currentUserId} AND f.id IS NULL AND
-            	(:#{#request.keyword} IS NULL OR u.full_name LIKE CONCAT('%', :#{#request.keyword}, '%'));
+            	u.id <> :#{#request.currentUserId}
+            	AND u.id NOT IN (
+            	SELECT f.user2_id FROM friends f WHERE f.user1_id = :#{#request.currentUserId}
+            	UNION
+            	SELECT f.user1_id FROM friends f WHERE f.user2_id = :#{#request.currentUserId}
+              )
             """, nativeQuery = true)
     Page<CFSuggestedPeopleResponse> getSuggestedPeople(Pageable pageable, CFGetSuggestedPeopleRequest request);
 
@@ -37,10 +39,9 @@ public interface CFFriendsRepository extends FriendsRepository {
             	friends f
             JOIN `user` u ON
             	f.user1_id = u.id
-            	OR f.user2_id = u.id
             WHERE
-            	(f.friend_status = 'PENDING' OR f.friend_status = 'REJECTED') AND
-                u.id LIKE :#{#request.currentUserId}
+            	f.friend_status = 'PENDING' AND
+                f.user2_id LIKE :#{#request.currentUserId}
             """, nativeQuery = true)
     Page<CFFriendRequestsResponse> getFriendRequests(Pageable pageable, CFGetFriendRequestsRequest request);
 

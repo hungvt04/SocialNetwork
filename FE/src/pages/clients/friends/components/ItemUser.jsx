@@ -45,7 +45,13 @@ const ItemUser = ({ user, isSuggest, mutualFriendsCount }) => {
       >
         <div style={{ cursor: 'pointer' }} onClick={() => navigate(`/friends/profile/${user.id}`)}>
           {user?.avatar && (
-            <img src={user?.avatar} alt="Avatar user" height={'100%'} width={'100%'} />
+            // <img src={user?.avatar} alt="Avatar user" height={'100%'} width={'100%'} />
+            <img
+              src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
+              alt="Avatar user"
+              height={'100%'}
+              width={'100%'}
+            />
           )}
 
           <Text

@@ -68,7 +68,7 @@ public class CFFriendServiceImpl implements CFFriendService {
 
         User user1 = VariablesGlobal.USER;
         User user2 = this.getUserById(user2Id);
-        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
+        List<Friends> friendsList = friendsRepository.findAllByUser1AndUser2(user1.getId(), user2.getId());
         if (!friendsList.isEmpty()) {
             throw new RestException("Friend request already exists");
         }
@@ -89,7 +89,7 @@ public class CFFriendServiceImpl implements CFFriendService {
 
         User user1 = VariablesGlobal.USER;
         User user2 = this.getUserById(userId);
-        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
+        List<Friends> friendsList = friendsRepository.findAllByUser1AndUser2(user1.getId(), user2.getId());
         if (friendsList.isEmpty()) {
             throw new RestException("You cannot unfriend this user because you are not friends yet!!!");
         }
@@ -103,13 +103,17 @@ public class CFFriendServiceImpl implements CFFriendService {
 
         User user1 = this.getUserById(user1Id);
         User user2 = VariablesGlobal.USER;
-        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
+        List<Friends> friendsList = friendsRepository.findAllByUser1AndUser2(user1.getId(), user2.getId());
         if (friendsList.isEmpty()) {
             throw new RestException("Friend request not found. You can only accept or reject an existing friend request!!!");
         }
         Friends friends = friendsList.get(0);
         friends.setFriendStatus(FriendStatus.ACCEPTED);
         friendsRepository.save(friends);
+
+        messagingTemplate.convertAndSend(Topic.TOPIC_NOTIFICATION + "/" + user1Id,
+                user2.getFullName() + " đã chấp nhận lời mời kết bạn.");
+
         return ResponseObject.ofData(null, "You are now friends!!!");
     }
 
@@ -118,13 +122,17 @@ public class CFFriendServiceImpl implements CFFriendService {
 
         User user1 = this.getUserById(user1Id);
         User user2 = VariablesGlobal.USER;
-        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
+        List<Friends> friendsList = friendsRepository.findAllByUser1AndUser2(user1.getId(), user2.getId());
         if (friendsList.isEmpty()) {
             throw new RestException("Friend request not found. You can only accept or reject an existing friend request!!!");
         }
         Friends friends = friendsList.get(0);
         friends.setFriendStatus(FriendStatus.REJECTED);
         friendsRepository.save(friends);
+
+        messagingTemplate.convertAndSend(Topic.TOPIC_NOTIFICATION + "/" + user1Id,
+                user2.getFullName() + " đã từ chối lời mời kết bạn.");
+
         return ResponseObject.ofData(null, "You have declined the friend request!!!");
     }
 
@@ -133,7 +141,7 @@ public class CFFriendServiceImpl implements CFFriendService {
 
         User user1 = this.getUserById(userId);
         User user2 = VariablesGlobal.USER;
-        List<Friends> friendsList = friendsRepository.findByUser1IdOrUser2Id(user1.getId(), user2.getId());
+        List<Friends> friendsList = friendsRepository.findAllByUser1AndUser2(user1.getId(), user2.getId());
         if (friendsList.isEmpty()) {
             throw new RestException("Friend request not found. You can only accept or reject an existing friend request!!!");
         }

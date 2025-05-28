@@ -103,9 +103,6 @@ public class CArticleServiceImpl implements CArticleService {
         Map<String, Object> response = new HashMap<>();
         List<CGetArticleResponse> infoArticles = articleRepository.getInfoArticle();
 
-        messagingTemplate.convertAndSend(Topic.TOPIC_NOTIFICATION + "/" + VariablesGlobal.USER.getId(),
-                "Bạn nhận được thông báo mới.");
-
         return ResponseObject.ofData(articleRepository.getInfoArticle());
     }
 
