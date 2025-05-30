@@ -14,4 +14,6 @@ public class CFGetFriendRequest extends PageRequest {
 
     private String keyword;
 
+    private String currentUserId;
+
 }

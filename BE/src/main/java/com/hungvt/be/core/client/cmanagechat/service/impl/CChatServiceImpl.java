@@ -1,15 +1,14 @@
 package com.hungvt.be.core.client.cmanagechat.service.impl;
 
 import com.hungvt.be.core.client.cmanagechat.model.request.CDeleteMessageRequest;
-import com.hungvt.be.core.client.cmanagechat.model.request.CGetMessageChatRoomRequest;
+import com.hungvt.be.core.client.cmanagechat.model.request.CGetMessageFriendsRequest;
 import com.hungvt.be.core.client.cmanagechat.model.request.CPostMessageRequest;
 import com.hungvt.be.core.client.cmanagechat.model.request.CPutMessageRequest;
 import com.hungvt.be.core.client.cmanagechat.model.response.CPostMessageResponse;
-import com.hungvt.be.core.client.cmanagechat.repository.CCChatRoomRepository;
+import com.hungvt.be.core.client.cmanagechat.repository.CCFriendsRepository;
 import com.hungvt.be.core.client.cmanagechat.repository.CCMessageRepository;
-import com.hungvt.be.core.client.cmanagechat.repository.CCUserRepository;
 import com.hungvt.be.core.client.cmanagechat.service.CChatService;
-import com.hungvt.be.entity.ChatRoom;
+import com.hungvt.be.entity.Friends;
 import com.hungvt.be.entity.Message;
 import com.hungvt.be.infrastructure.common.model.response.PageableObject;
 import com.hungvt.be.infrastructure.common.model.response.ResponseObject;
@@ -27,23 +26,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CChatServiceImpl implements CChatService {
 
-    private final CCChatRoomRepository chatRoomRepository;
+//    private final CCFriendsRepository chatRoomRepository;
+    private final CCFriendsRepository friendsRepository;
 
     private final CCMessageRepository messageRepository;
 
-    private final CCUserRepository userRepository;
+//    private final CCUserRepository userRepository;
 
     private final SimpMessagingTemplate messagingTemplate;
 
     @Override
-    public ResponseObject getMessageChatRoom(CGetMessageChatRoomRequest request) {
+    public ResponseObject getMessageFriends(CGetMessageFriendsRequest request) {
 
-        ChatRoom chatRoom = this.getChatRoom(request.getChatRoomId());
-        this.hasPermissionChatRoom(chatRoom);
+        Friends friends = this.getFriends(request.getFriendsId());
+        this.hasPermissionFriends(friends);
 
         return ResponseObject.ofData(
                 PageableObject.of(
-                        messageRepository.getMessageByChatRoom(Helper.createPageable(request), request)
+                        messageRepository.getMessageByFriends(Helper.createPageable(request), request)
                 )
         );
     }
@@ -51,26 +51,26 @@ public class CChatServiceImpl implements CChatService {
     @Override
     public ResponseObject postMessage(CPostMessageRequest request) {
 
-        ChatRoom chatRoom = this.getChatRoom(request.getChatRoomId());
-        this.hasPermissionChatRoom(chatRoom);
+        Friends friends = this.getFriends(request.getFriendsId());
+        this.hasPermissionFriends(friends);
 
         Message message = new Message();
         message.setRead(false);
-        message.setChatRoom(chatRoom);
+        message.setFriends(friends);
         message.setSender(VariablesGlobal.USER);
         message.setContent(request.getContent());
         message = messageRepository.save(message);
 
         CPostMessageResponse response = this.convertCPostMessageResponse(message);
-        messagingTemplate.convertAndSend(Topic.TOPIC_CHAT_PRIVATE + "/" + request.getChatRoomId(), response);
+        messagingTemplate.convertAndSend(Topic.TOPIC_CHAT_PRIVATE + "/" + request.getFriendsId(), response);
         return ResponseObject.ofData(null);
     }
 
     @Override
     public ResponseObject putMessage(String messageId, CPutMessageRequest request) {
 
-        ChatRoom chatRoom = this.getChatRoom(request.getChatRoomId());
-        this.hasPermissionChatRoom(chatRoom);
+        Friends friends = this.getFriends(request.getFriendsId());
+        this.hasPermissionFriends(friends);
 
         Message message = this.getMessage(messageId);
         this.hasPermissionMessage(message);
@@ -78,15 +78,15 @@ public class CChatServiceImpl implements CChatService {
         message = messageRepository.save(message);
 
         CPostMessageResponse response = this.convertCPostMessageResponse(message);
-        messagingTemplate.convertAndSend(Topic.TOPIC_CHAT_PRIVATE + "/" + request.getChatRoomId(), response);
+        messagingTemplate.convertAndSend(Topic.TOPIC_CHAT_PRIVATE + "/" + request.getFriendsId(), response);
         return ResponseObject.ofData(null);
     }
 
     @Override
     public ResponseObject deleteMessage(String messageId, CDeleteMessageRequest request) {
 
-        ChatRoom chatRoom = this.getChatRoom(request.getChatRoomId());
-        this.hasPermissionChatRoom(chatRoom);
+        Friends friends = this.getFriends(request.getFriendsId());
+        this.hasPermissionFriends(friends);
 
         Message message = this.getMessage(messageId);
         this.hasPermissionMessage(message);
@@ -94,23 +94,23 @@ public class CChatServiceImpl implements CChatService {
         message = messageRepository.save(message);
 
         CPostMessageResponse response = this.convertCPostMessageResponse(message);
-        messagingTemplate.convertAndSend(Topic.TOPIC_CHAT_PRIVATE + "/" + request.getChatRoomId(), response);
+        messagingTemplate.convertAndSend(Topic.TOPIC_CHAT_PRIVATE + "/" + request.getFriendsId(), response);
         return ResponseObject.ofData(null);
     }
 
-    private ChatRoom getChatRoom(String chatRoomId) {
+    private Friends getFriends(String friendsId) {
 
-        Optional<ChatRoom> chatRoomOptional = chatRoomRepository.findById(chatRoomId);
+        Optional<Friends> chatRoomOptional = friendsRepository.findById(friendsId);
         if(chatRoomOptional.isEmpty()) {
-            throw new RestException("Not found chat room with id: " + chatRoomId);
+            throw new RestException("Not found chat room with id: " + friendsId);
         }
         return chatRoomOptional.get();
     }
 
-    private void hasPermissionChatRoom(ChatRoom chatRoom) {
+    private void hasPermissionFriends(Friends friends) {
 
-        if(chatRoom.getUser1().getId().equals(VariablesGlobal.USER.getId()) ||
-                chatRoom.getUser2().getId().equals(VariablesGlobal.USER.getId())) {
+        if(friends.getUser1().getId().equals(VariablesGlobal.USER.getId()) ||
+                friends.getUser2().getId().equals(VariablesGlobal.USER.getId())) {
             return;
         }
         throw new RestException("You don't have permission to access this chat room.");

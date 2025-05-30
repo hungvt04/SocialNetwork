@@ -1,7 +1,7 @@
 package com.hungvt.be.core.client.cmanagechat.controller;
 
 import com.hungvt.be.core.client.cmanagechat.model.request.CDeleteMessageRequest;
-import com.hungvt.be.core.client.cmanagechat.model.request.CGetMessageChatRoomRequest;
+import com.hungvt.be.core.client.cmanagechat.model.request.CGetMessageFriendsRequest;
 import com.hungvt.be.core.client.cmanagechat.model.request.CPostMessageRequest;
 import com.hungvt.be.core.client.cmanagechat.model.request.CPutMessageRequest;
 import com.hungvt.be.core.client.cmanagechat.service.CChatService;
@@ -20,8 +20,9 @@ public class CChatController {
     private final CChatService service;
 
     @GetMapping
-    public ResponseEntity<?> getMessageChatRoom(CGetMessageChatRoomRequest request) {
-        return ResponseEntity.ok(service.getMessageChatRoom(request));
+    public ResponseEntity<?> getMessageFriends(CGetMessageFriendsRequest request) {
+        System.out.println(request);
+        return ResponseEntity.ok(service.getMessageFriends(request));
     }
 
     @PostMapping

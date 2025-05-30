@@ -1,19 +1,13 @@
 package com.hungvt.be.core.client.cmanagefriend.controller;
 
+import com.hungvt.be.core.client.cmanagefriend.model.request.CFGetFriendRequest;
 import com.hungvt.be.core.client.cmanagefriend.model.request.CFGetFriendRequestsRequest;
 import com.hungvt.be.core.client.cmanagefriend.model.request.CFGetSuggestedPeopleRequest;
 import com.hungvt.be.core.client.cmanagefriend.service.CFFriendService;
 import com.hungvt.be.infrastructure.constant.MappingUrl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +18,8 @@ public class CFriendController {
     private final CFFriendService service;
 
     @GetMapping
-    public ResponseEntity<?> getAllFriends() {
-        return ResponseEntity.ok("Get all friends");
+    public ResponseEntity<?> getAllFriends(CFGetFriendRequest request) {
+        return ResponseEntity.ok(service.getAllFriends(request));
     }
 
     @GetMapping("/requests")

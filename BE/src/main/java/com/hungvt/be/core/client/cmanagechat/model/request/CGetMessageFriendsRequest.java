@@ -1,16 +1,15 @@
 package com.hungvt.be.core.client.cmanagechat.model.request;
 
+import com.hungvt.be.infrastructure.common.model.request.PageRequest;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CDeleteMessageRequest {
+@ToString
+public class CGetMessageFriendsRequest extends PageRequest {
 
     @NotBlank(message = "Friends id is required.")
     private String friendsId;

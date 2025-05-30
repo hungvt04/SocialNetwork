@@ -18,7 +18,6 @@ const Feed = () => {
 
   const connectWs = () => {
     const token = sessionStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN);
-    console.log('🔑 Token:', token ? 'Found' : 'Not found');
     const stompClient = new Client({
       webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
       debug: (str) => console.log('[stompjs]', str),
@@ -38,21 +37,6 @@ const Feed = () => {
             alert(message?.body);
           },
         );
-
-        // subscriptionRef.current = stompClient.subscribe(
-        //   '/topic/chat-private/7d1d71ee-16b6-438b-825d-680c1d0fd7d6/7503409c-81c5-4d33-8d0d-6bcae6bfff24',
-        //   (message) => {
-        //     const receivedMessage = JSON.parse(message.body);
-        //     console.log('Nhận tin nhắn 1-1:', receivedMessage);
-        //     // Xử lý tin nhắn ở đây
-        //   },
-        //   // {
-        //   //   onError: (error) => {
-        //   //     console.error('Subscription error:', error);
-        //   //     alert('Subscription error: ' + error.headers.message);
-        //   //   },
-        //   // },
-        // );
       },
       onStompError: (frame) => {
         console.error('❌ STOMP error:', frame);

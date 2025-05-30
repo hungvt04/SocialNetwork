@@ -13,8 +13,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CPostMessageRequest {
 
-    @NotBlank(message = "Chat room ID is required.")
-    private String chatRoomId;
+    @NotBlank(message = "Friends id is required.")
+    private String friendsId;
 
     @NotBlank(message = "Message content must not be empty.")
     @Size(max = 1000, message = "Message content must not exceed 1000 characters.")

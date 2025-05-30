@@ -29,11 +29,19 @@ public class CFFriendServiceImpl implements CFFriendService {
 
     private final CFUserRepository userRepository;
 
+//    private final CFChatRoomRepository chatRoomRepository;
+
     private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     public ResponseObject getAllFriends(CFGetFriendRequest request) {
-        return null;
+
+        request.setCurrentUserId(VariablesGlobal.USER.getId());
+        return ResponseObject.ofData(PageableObject.of(friendsRepository.getFriends(
+                        Helper.createPageable(request),
+                        request
+                ))
+        );
     }
 
     private User getUserById(String userId) {
@@ -111,6 +119,16 @@ public class CFFriendServiceImpl implements CFFriendService {
         friends.setFriendStatus(FriendStatus.ACCEPTED);
         friendsRepository.save(friends);
 
+//        List<ChatRoom> response = chatRoomRepository.findChatRoomByUser(user1Id, user2.getId());
+//        ChatRoom chatRoom;
+//        if(response.isEmpty()) {
+//            chatRoom = new ChatRoom(user1, user2);
+//        } else {
+//            chatRoom = response.get(0);
+//            chatRoom.setIsDeleted(false);
+//        }
+//        chatRoomRepository.save(chatRoom);
+
         messagingTemplate.convertAndSend(Topic.TOPIC_NOTIFICATION + "/" + user1Id,
                 user2.getFullName() + " đã chấp nhận lời mời kết bạn.");
 
@@ -150,4 +168,5 @@ public class CFFriendServiceImpl implements CFFriendService {
         friendsRepository.save(friends);
         return ResponseObject.ofData(null, "You have declined the friend request!!!");
     }
+
 }

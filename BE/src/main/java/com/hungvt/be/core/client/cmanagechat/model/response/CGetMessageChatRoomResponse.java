@@ -2,16 +2,22 @@ package com.hungvt.be.core.client.cmanagechat.model.response;
 
 public interface CGetMessageChatRoomResponse {
 
-    String getId();
+    String getMessageId();
 
-    String senderId();
+    String getSenderId();
 
     String getFullName();
 
-    String getAvatar();
+    String getSenderAvatar();
 
     String getContent();
 
     Boolean getIsRead();
+
+    Long getCreatedAt();
+
+    Long getUpdatedAt();
+
+    Boolean getIsDeleted();
 
 }

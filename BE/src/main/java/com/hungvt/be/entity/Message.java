@@ -13,9 +13,13 @@ import lombok.*;
 @Table(name = "message")
 public class Message extends PrimaryEntity {
 
+//    @ManyToOne
+//    @JoinColumn(name = "chat_room_id", nullable = false)
+//    private ChatRoom chatRoom;
+
     @ManyToOne
-    @JoinColumn(name = "chat_room_id", nullable = false)
-    private ChatRoom chatRoom;
+    @JoinColumn(name = "friends_id", nullable = false)
+    private Friends friends;
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)

@@ -1,6 +1,11 @@
 import { API_MANAGEMENT_FRIENDS } from '@/constants/BaseApi';
 import axiosInstance from '../api/axiosInstance';
 
+export const getFriends = async (request) => {
+  const response = await axiosInstance.get(API_MANAGEMENT_FRIENDS, request);
+  return response;
+};
+
 export const getFriendRequests = async (request) => {
   const response = await axiosInstance.get(API_MANAGEMENT_FRIENDS + '/requests', request);
   return response;

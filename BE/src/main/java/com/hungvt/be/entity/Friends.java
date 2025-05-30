@@ -2,17 +2,8 @@ package com.hungvt.be.entity;
 
 import com.hungvt.be.entity.base.PrimaryEntity;
 import com.hungvt.be.infrastructure.constant.FriendStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
@@ -37,5 +28,9 @@ public class Friends extends PrimaryEntity {
 
     @Enumerated(EnumType.STRING)
     private FriendStatus friendStatus;
+
+    // user1 + user2 = Friends
+    // user2 + user3 = Friends
+    // user1 + user3 = Friends
 
 }
